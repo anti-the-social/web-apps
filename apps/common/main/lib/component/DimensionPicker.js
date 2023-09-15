@@ -1,5 +1,6 @@
 /*
- * (c) Copyright Ascensio System SIA 2010-2023
+ *
+ * (c) Copyright Ascensio System SIA 2010-2019
  *
  * This program is a free software product. You can redistribute it and/or
  * modify it under the terms of the GNU Affero General Public License (AGPL)
@@ -12,7 +13,7 @@
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR  PURPOSE. For
  * details, see the GNU AGPL at: http://www.gnu.org/licenses/agpl-3.0.html
  *
- * You can contact Ascensio System SIA at 20A-6 Ernesta Birznieka-Upish
+ * You can contact Ascensio System SIA at 20A-12 Ernesta Birznieka-Upisha
  * street, Riga, Latvia, EU, LV-1050.
  *
  * The  interactive user interfaces in modified source and object code versions
@@ -28,7 +29,7 @@
  * Creative Commons Attribution-ShareAlike 4.0 International. See the License
  * terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
  *
- */
+*/
 /**
  *  DimensionPicker.js
  *
@@ -52,13 +53,12 @@ define([
                 minRows     : 5,
                 minColumns  : 5,
                 maxRows     : 20,
-                maxColumns  : 20,
-                direction   : undefined // 'left', 'right'
+                maxColumns  : 20
             },
 
             template:_.template([
                 '<div style="width: 100%; height: 100%;">',
-                    '<div dir="ltr" class="dimension-picker-status">0x0</div>',
+                    '<div class="dimension-picker-status">0x0</div>',
                     '<div class="dimension-picker-observecontainer">',
                         '<div class="dimension-picker-mousecatcher"></div>',
                         '<div class="dimension-picker-unhighlighted"></div>',
@@ -84,24 +84,12 @@ define([
                 me.maxRows     = me.options.maxRows;
                 me.maxColumns  = me.options.maxColumns;
 
-                me.direction   = me.options.direction;
-                if (Common.UI.isRTL() && !me.direction) {
-                    me.direction = 'right';
-                }
-
                 me.curColumns = 0;
                 me.curRows = 0;
 
                 var onMouseMove = function(event){
-                    var offsetX;
-                    if (me.direction === 'right' && me.areaMouseCatcher) {
-                        var width = me.areaMouseCatcher.width();
-                        offsetX = event.offsetX === undefined ? (width - event.originalEvent.layerX) : (width - event.offsetX)*Common.Utils.zoom()
-                    } else {
-                        offsetX = event.offsetX === undefined ? event.originalEvent.layerX : event.offsetX*Common.Utils.zoom();
-                    }
                     me.setTableSize(
-                        Math.ceil(offsetX / me.itemSize),
+                        Math.ceil((event.offsetX === undefined ? event.originalEvent.layerX : event.offsetX*Common.Utils.zoom()) / me.itemSize),
                         Math.ceil((event.offsetY === undefined ? event.originalEvent.layerY : event.offsetY*Common.Utils.zoom()) / me.itemSize),
                         event
                     );
@@ -116,31 +104,27 @@ define([
                 };
 
                 if (rootEl){
-                    me.areaMouseCatcher    = rootEl.find('.dimension-picker-mousecatcher');
+                    var areaMouseCatcher    = rootEl.find('.dimension-picker-mousecatcher');
                     me.areaUnHighLighted   = rootEl.find('.dimension-picker-unhighlighted');
                     me.areaHighLighted     = rootEl.find('.dimension-picker-highlighted');
                     me.areaStatus          = rootEl.find('.dimension-picker-status');
 
                     rootEl.css({width: me.minColumns + 'em'});
-                    me.areaMouseCatcher.css('z-index', 1);
-                    me.areaMouseCatcher.width(me.maxColumns + 'em').height(me.maxRows + 'em');
+                    areaMouseCatcher.css('z-index', 1);
+                    areaMouseCatcher.width(me.maxColumns + 'em').height(me.maxRows + 'em');
                     me.areaUnHighLighted.width(me.minColumns + 'em').height(me.minRows + 'em');
-                    me.areaStatus.html(!Common.UI.isRTL() ? this.curColumns + ' x ' + this.curRows : this.curRows + ' x ' + this.curColumns);
+                    me.areaStatus.html(me.curColumns + ' x ' + me.curRows);
                     me.areaStatus.width(me.areaUnHighLighted.width());
 
-                    me.areaMouseCatcher.on('mousemove', onMouseMove);
+                    areaMouseCatcher.on('mousemove', onMouseMove);
                     me.areaHighLighted.on('mousemove', onMouseMove);
                     me.areaUnHighLighted.on('mousemove', onMouseMove);
-                    me.areaMouseCatcher.on('mouseleave', onMouseLeave);
+                    areaMouseCatcher.on('mouseleave', onMouseLeave);
                     me.areaHighLighted.on('mouseleave', onMouseLeave);
                     me.areaUnHighLighted.on('mouseleave', onMouseLeave);
-                    me.areaMouseCatcher.on('click', onHighLightedMouseClick);
+                    areaMouseCatcher.on('click', onHighLightedMouseClick);
                     me.areaHighLighted.on('click', onHighLightedMouseClick);
                     me.areaUnHighLighted.on('click', onHighLightedMouseClick);
-
-                    if (me.direction === 'right') {
-                        me.areaHighLighted.css({left: 'auto', right: '0'});
-                    }
                 }
             },
 
@@ -173,7 +157,7 @@ define([
                     );
 
                     this.cmpEl.width(this.areaUnHighLighted.width());
-                    this.areaStatus.html(!Common.UI.isRTL() ? this.curColumns + ' x ' + this.curRows : this.curRows + ' x ' + this.curColumns);
+                    this.areaStatus.html(this.curColumns + ' x ' + this.curRows);
                     this.areaStatus.width(this.areaUnHighLighted.width());
 
                     this.trigger('change', this, this.curColumns, this.curRows, event);

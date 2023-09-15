@@ -1,5 +1,6 @@
 /*
- * (c) Copyright Ascensio System SIA 2010-2023
+ *
+ * (c) Copyright Ascensio System SIA 2010-2019
  *
  * This program is a free software product. You can redistribute it and/or
  * modify it under the terms of the GNU Affero General Public License (AGPL)
@@ -12,7 +13,7 @@
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR  PURPOSE. For
  * details, see the GNU AGPL at: http://www.gnu.org/licenses/agpl-3.0.html
  *
- * You can contact Ascensio System SIA at 20A-6 Ernesta Birznieka-Upish
+ * You can contact Ascensio System SIA at 20A-12 Ernesta Birznieka-Upisha
  * street, Riga, Latvia, EU, LV-1050.
  *
  * The  interactive user interfaces in modified source and object code versions
@@ -28,7 +29,7 @@
  * Creative Commons Attribution-ShareAlike 4.0 International. See the License
  * terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
  *
- */
+*/
 /**
  *  SignatureSettings.js
  *
@@ -213,7 +214,7 @@ define([
 
             this.showSignatureMenu(record, showPoint);
 
-            menu.menuAlign = Common.UI.isRTL() ? 'tr-br' : 'tl-bl';
+            menu.menuAlign = 'tl-bl';
             menu.menuAlignEl = null;
             menu.setOffset(15, 5);
             menu.show();
@@ -240,7 +241,7 @@ define([
 
                 this.showSignatureMenu(record, showPoint);
 
-                menu.menuAlign = Common.UI.isRTL() ? 'tl-bl' : 'tr-br';
+                menu.menuAlign = 'tr-br';
                 menu.menuAlignEl = currentTarget;
                 menu.setOffset(-20, -currentTarget.height()/2 + 3);
                 menu.show();
@@ -412,7 +413,7 @@ define([
                     chat: false,
                     review: true,
                     viewport: true,
-                    documentHolder: {clear: true, disable: true},
+                    documentHolder: true,
                     toolbar: true,
                     celleditor: {previewMode: true}
                 }, 'signature');

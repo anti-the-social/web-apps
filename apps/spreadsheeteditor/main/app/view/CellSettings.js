@@ -1,5 +1,6 @@
 /*
- * (c) Copyright Ascensio System SIA 2010-2023
+ *
+ * (c) Copyright Ascensio System SIA 2010-2019
  *
  * This program is a free software product. You can redistribute it and/or
  * modify it under the terms of the GNU Affero General Public License (AGPL)
@@ -12,7 +13,7 @@
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR  PURPOSE. For
  * details, see the GNU AGPL at: http://www.gnu.org/licenses/agpl-3.0.html
  *
- * You can contact Ascensio System SIA at 20A-6 Ernesta Birznieka-Upish
+ * You can contact Ascensio System SIA at 20A-12 Ernesta Birznieka-Upisha
  * street, Riga, Latvia, EU, LV-1050.
  *
  * The  interactive user interfaces in modified source and object code versions
@@ -28,7 +29,7 @@
  * Creative Commons Attribution-ShareAlike 4.0 International. See the License
  * terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
  *
- */
+*/
 /**
  *  CellSettings.js
  *
@@ -247,7 +248,6 @@ define([
 
             this.btnDirection = new Common.UI.Button({
                 cls         : 'btn-large-dataview',
-                scaling     : false,
                 iconCls     : 'item-gradient gradient-left',
                 menu        : new Common.UI.Menu({
                     style: 'min-width: 60px;',
@@ -288,8 +288,7 @@ define([
                 var color = me.GradColor.colors[me.GradColor.currentIdx];
                 me.btnGradColor.setColor(color);
                 me.colorsGrad.select(color,false);
-                var curValue = me.GradColor.values[me.GradColor.currentIdx];
-                me.spnGradPosition.setValue(Common.UI.isRTL() ? me.sldrGradient.maxValue - curValue : curValue);
+                me.spnGradPosition.setValue(me.GradColor.values[me.GradColor.currentIdx]);
             });
             this.sldrGradient.on('thumbdblclick', function(cmp){
                 me.btnGradColor.cmpEl.find('button').dropdown('toggle');
@@ -425,17 +424,17 @@ define([
                 menuStyle: 'min-width: 93px;',
                 disabled: this._locked,
                 data: [
-                    { value: Asc.c_oAscBorderStyles.Thin,   imgId: "solid-s"},
-                    { value: Asc.c_oAscBorderStyles.Hair,   imgId: "dots-s"},
-                    { value: Asc.c_oAscBorderStyles.Dotted,   imgId: "dashes-s"},
-                    { value: Asc.c_oAscBorderStyles.Dashed,   imgId: "dashes-m"},
-                    { value: Asc.c_oAscBorderStyles.DashDot,   imgId: "dash-dot-s"},
-                    { value: Asc.c_oAscBorderStyles.DashDotDot,   imgId: "dash-dot-dot-s"},
-                    { value: Asc.c_oAscBorderStyles.Medium, imgId: "solid-m"},
-                    { value: Asc.c_oAscBorderStyles.MediumDashed,  imgId: "dashes-l"},
-                    { value: Asc.c_oAscBorderStyles.MediumDashDot,  imgId: "dash-dot-m"},
-                    { value: Asc.c_oAscBorderStyles.MediumDashDotDot,  imgId: "dash-dot-dot-m"},
-                    { value: Asc.c_oAscBorderStyles.Thick,  imgId: "solid-l"}
+                    { value: Asc.c_oAscBorderStyles.Thin,   offsety: 0},
+                    { value: Asc.c_oAscBorderStyles.Hair,   offsety: 20},
+                    { value: Asc.c_oAscBorderStyles.Dotted,   offsety: 40},
+                    { value: Asc.c_oAscBorderStyles.Dashed,   offsety: 60},
+                    { value: Asc.c_oAscBorderStyles.DashDot,   offsety: 80},
+                    { value: Asc.c_oAscBorderStyles.DashDotDot,   offsety: 100},
+                    { value: Asc.c_oAscBorderStyles.Medium, offsety: 120},
+                    { value: Asc.c_oAscBorderStyles.MediumDashed,  offsety: 140},
+                    { value: Asc.c_oAscBorderStyles.MediumDashDot,  offsety: 160},
+                    { value: Asc.c_oAscBorderStyles.MediumDashDotDot,  offsety: 180},
+                    { value: Asc.c_oAscBorderStyles.Thick,  offsety: 200}
                 ],
                 dataHint: '1',
                 dataHintDirection: 'bottom',
@@ -451,7 +450,6 @@ define([
                 menu        : true,
                 color: 'auto',
                 auto: true,
-                eyeDropper: true,
                 dataHint: '1',
                 dataHintDirection: 'bottom',
                 dataHintOffset: 'medium'
@@ -464,7 +462,6 @@ define([
                 menu        : true,
                 transparent : true,
                 color: 'transparent',
-                eyeDropper: true,
                 dataHint: '1',
                 dataHintDirection: 'bottom',
                 dataHintOffset: 'medium'
@@ -961,8 +958,7 @@ define([
                         me.sldrGradient.setActiveThumb(me.GradColor.currentIdx);
 
                         // Step position
-                        var curValue = this.GradColor.values[this.GradColor.currentIdx];
-                        this.spnGradPosition.setValue(Common.UI.isRTL() ? this.sldrGradient.maxValue - curValue : curValue);
+                        this.spnGradPosition.setValue(this.GradColor.values[this.GradColor.currentIdx]);
 
                         this.OriginalFillType = Asc.c_oAscFill.FILL_TYPE_GRAD;
                         this.FGColor = {
@@ -1111,20 +1107,15 @@ define([
                 // create color buttons
                  this.btnBorderColor.setMenu();
                  this.borderColor = this.btnBorderColor.getPicker();
-                 this.btnBorderColor.on('eyedropper:start', _.bind(this.onEyedropperStart, this));
-                 this.btnBorderColor.on('eyedropper:end', _.bind(this.onEyedropperEnd, this));
 
                  this.btnBackColor.setMenu();
                  this.btnBackColor.on('color:select', _.bind(this.onColorsBackSelect, this));
-                 this.btnBackColor.on('eyedropper:start', _.bind(this.onEyedropperStart, this));
-                 this.btnBackColor.on('eyedropper:end', _.bind(this.onEyedropperEnd, this));
                  this.colorsBack = this.btnBackColor.getPicker();
                  this.fillControls.push(this.btnBackColor);
 
                  this.btnGradColor = new Common.UI.ColorButton({
                      parentEl: $('#cell-gradient-color-btn'),
                      color: '000000',
-                     eyeDropper: true,
                      dataHint: '1',
                      dataHintDirection: 'bottom',
                      dataHintOffset: 'big'
@@ -1132,13 +1123,10 @@ define([
                  this.fillControls.push(this.btnGradColor);
                  this.colorsGrad = this.btnGradColor.getPicker();
                  this.btnGradColor.on('color:select', _.bind(this.onColorsGradientSelect, this));
-                 this.btnGradColor.on('eyedropper:start', _.bind(this.onEyedropperStart, this));
-                 this.btnGradColor.on('eyedropper:end', _.bind(this.onEyedropperEnd, this));
 
                  this.btnFGColor = new Common.UI.ColorButton({
                      parentEl: $('#cell-foreground-color-btn'),
                      color: '000000',
-                     eyeDropper: true,
                      dataHint: '1',
                      dataHintDirection: 'bottom',
                      dataHintOffset: 'medium'
@@ -1146,13 +1134,10 @@ define([
                  this.fillControls.push(this.btnFGColor);
                  this.colorsFG = this.btnFGColor.getPicker();
                  this.btnFGColor.on('color:select', _.bind(this.onColorsFGSelect, this));
-                 this.btnFGColor.on('eyedropper:start', _.bind(this.onEyedropperStart, this));
-                 this.btnFGColor.on('eyedropper:end', _.bind(this.onEyedropperEnd, this));
 
                  this.btnBGColor = new Common.UI.ColorButton({
                      parentEl: $('#cell-background-color-btn'),
                      color: 'ffffff',
-                     eyeDropper: true,
                      dataHint: '1',
                      dataHintDirection: 'bottom',
                      dataHintOffset: 'medium'
@@ -1160,8 +1145,6 @@ define([
                  this.fillControls.push(this.btnBGColor);
                  this.colorsBG = this.btnBGColor.getPicker();
                  this.btnBGColor.on('color:select', _.bind(this.onColorsBGSelect, this));
-                 this.btnBGColor.on('eyedropper:start', _.bind(this.onEyedropperStart, this));
-                 this.btnBGColor.on('eyedropper:end', _.bind(this.onEyedropperEnd, this));
              }
              this.colorsBack.updateColors(Common.Utils.ThemeColor.getEffectColors(), Common.Utils.ThemeColor.getStandartColors());
              this.borderColor.updateColors(Common.Utils.ThemeColor.getEffectColors(), Common.Utils.ThemeColor.getStandartColors());
@@ -1427,8 +1410,7 @@ define([
 
         onGradientChange: function(slider, newValue, oldValue) {
             this.GradColor.values = slider.getValues();
-            var curValue = this.GradColor.values[this.GradColor.currentIdx];
-            this.spnGradPosition.setValue(Common.UI.isRTL() ? this.sldrGradient.maxValue - curValue : curValue, true);
+            this.spnGradPosition.setValue(this.GradColor.values[this.GradColor.currentIdx], true);
             this._sliderChanged = true;
             if (this.api && !this._noApply) {
                 if (this._sendUndoPoint)  {
@@ -1530,11 +1512,8 @@ define([
 
         onPositionChange: function(btn) {
             var me = this,
-                pos = btn.getNumberValue();
-            if (Common.UI.isRTL()) {
-                pos = this.sldrGradient.maxValue - pos;
-            }
-            var minValue = (this.GradColor.currentIdx-1<0) ? 0 : this.GradColor.values[this.GradColor.currentIdx-1],
+                pos = btn.getNumberValue(),
+                minValue = (this.GradColor.currentIdx-1<0) ? 0 : this.GradColor.values[this.GradColor.currentIdx-1],
                 maxValue = (this.GradColor.currentIdx+1<this.GradColor.values.length) ? this.GradColor.values[this.GradColor.currentIdx+1] : 100,
                 needSort = pos < minValue || pos > maxValue;
             if (this.api) {
@@ -1588,15 +1567,6 @@ define([
                 this.GradColor.currentIdx = newIndex;
             }
             this.sldrGradient.setActiveThumb(this.GradColor.currentIdx);
-        },
-
-        onEyedropperStart: function (btn) {
-            this.api.asc_startEyedropper(_.bind(btn.eyedropperEnd, btn));
-            this.fireEvent('eyedropper', true);
-        },
-
-        onEyedropperEnd: function () {
-            this.fireEvent('eyedropper', false);
         },
 
         textBorders:        'Border\'s Style',

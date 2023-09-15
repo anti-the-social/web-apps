@@ -1,5 +1,6 @@
 /*
- * (c) Copyright Ascensio System SIA 2010-2023
+ *
+ * (c) Copyright Ascensio System SIA 2010-2021
  *
  * This program is a free software product. You can redistribute it and/or
  * modify it under the terms of the GNU Affero General Public License (AGPL)
@@ -12,7 +13,7 @@
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR  PURPOSE. For
  * details, see the GNU AGPL at: http://www.gnu.org/licenses/agpl-3.0.html
  *
- * You can contact Ascensio System SIA at 20A-6 Ernesta Birznieka-Upish
+ * You can contact Ascensio System SIA at 20A-12 Ernesta Birznieka-Upisha
  * street, Riga, Latvia, EU, LV-1050.
  *
  * The  interactive user interfaces in modified source and object code versions
@@ -42,9 +43,7 @@ define([
     'common/main/lib/view/Protection',
     'spreadsheeteditor/main/app/view/WBProtection',
     'spreadsheeteditor/main/app/view/ProtectDialog',
-    'spreadsheeteditor/main/app/view/ProtectRangesDlg',
-    'spreadsheeteditor/main/app/view/ProtectedRangesManagerDlg',
-    'spreadsheeteditor/main/app/view/ProtectedRangesEditDlg'
+    'spreadsheeteditor/main/app/view/ProtectRangesDlg'
 ], function () {
     'use strict';
 
@@ -61,11 +60,10 @@ define([
 
             this.addListeners({
                 'WBProtection': {
-                    'protect:workbook':     _.bind(this.onWorkbookClick, this),
-                    'protect:sheet':        _.bind(this.onSheetClick, this),
-                    'protect:allow-ranges': _.bind(this.onAllowRangesClick, this),
-                    'protect:lock-options': _.bind(this.onLockOptionClick, this),
-                    'protect:range':       _.bind(this.onProtectRangeClick, this)
+                    'protect:workbook':      _.bind(this.onWorkbookClick, this),
+                    'protect:sheet':     _.bind(this.onSheetClick, this),
+                    'protect:ranges':     _.bind(this.onRangesClick, this),
+                    'protect:lock-options':     _.bind(this.onLockOptionClick, this)
                 }
             });
         },
@@ -182,7 +180,6 @@ define([
                     win = new SSE.Views.ProtectDialog({
                         type: 'sheet',
                         props: props,
-                        api: me.api,
                         handler: function(result, value, props) {
                             btn = result;
                             if (result == 'ok') {
@@ -231,7 +228,7 @@ define([
             }
         },
 
-        onAllowRangesClick: function() {
+        onRangesClick: function() {
             var me = this,
                 props = me.api.asc_getProtectedRanges(),
                 win = new SSE.Views.ProtectRangesDlg({
@@ -271,20 +268,6 @@ define([
                     break;
             }
             Common.NotificationCenter.trigger('edit:complete', this);
-        },
-
-        onProtectRangeClick: function() {
-            var me = this,
-                win = new SSE.Views.ProtectedRangesManagerDlg({
-                    api: me.api,
-                    canRequestUsers: me.appConfig.canRequestUsers,
-                    currentUser: me.appConfig.user,
-                    handler: function(result, settings) {
-                        Common.NotificationCenter.trigger('edit:complete');
-                    }
-                });
-
-            win.show();
         },
 
         onAppReady: function (config) {
@@ -375,7 +358,6 @@ define([
                     }
                 }
             }
-            Common.Utils.lockControls(Common.enumLock.userProtected, !!info.asc_getUserProtected(), { array: [this.view.chLockedCell, this.view.chHiddenFormula]});
         }
 
     }, SSE.Controllers.WBProtection || {}));

@@ -1,5 +1,6 @@
 /*
- * (c) Copyright Ascensio System SIA 2010-2023
+ *
+ * (c) Copyright Ascensio System SIA 2010-2019
  *
  * This program is a free software product. You can redistribute it and/or
  * modify it under the terms of the GNU Affero General Public License (AGPL)
@@ -12,7 +13,7 @@
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR  PURPOSE. For
  * details, see the GNU AGPL at: http://www.gnu.org/licenses/agpl-3.0.html
  *
- * You can contact Ascensio System SIA at 20A-6 Ernesta Birznieka-Upish
+ * You can contact Ascensio System SIA at 20A-12 Ernesta Birznieka-Upisha
  * street, Riga, Latvia, EU, LV-1050.
  *
  * The  interactive user interfaces in modified source and object code versions
@@ -28,7 +29,7 @@
  * Creative Commons Attribution-ShareAlike 4.0 International. See the License
  * terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
  *
- */
+*/
 /**
  *    Viewport.js
  *
@@ -239,7 +240,7 @@ define([
                 this.viewport.hlayout.doLayout();
                 break;
             case 'history':
-                var panel = this.viewport.hlayout.getItem('history');
+                var panel = this.viewport.hlayout.items[1];
                 if (panel.resize.el) {
                     this.boxSdk.css('border-left', '');
                     panel.resize.el.show();
@@ -247,7 +248,7 @@ define([
                 this.viewport.hlayout.doLayout();
                 break;
             case 'leftmenu':
-                var panel = this.viewport.hlayout.getItem('left');
+                var panel = this.viewport.hlayout.items[0];
                 if (panel.resize.el) {
                     if (panel.el.width() > 40) {
                         this.boxSdk.css('border-left', '');
@@ -338,11 +339,8 @@ define([
                 }, this));
             }
             if (this.header.btnSearch.pressed) {
-                var selectedText = this.api.asc_GetSelectedText(),
-                    searchController = this.getApplication().getController('Search'),
-                    resultsNumber = searchController.getResultsNumber();
-                this.searchBar.show(selectedText && selectedText.trim() || searchController.getSearchText());
-                this.searchBar.updateResultsNumber(resultsNumber[0], resultsNumber[1]);
+                var selectedText = this.api.asc_GetSelectedText();
+                this.searchBar.show(selectedText && selectedText.trim() || this.getApplication().getController('Search').getSearchText());
             } else {
                 this.searchBar.hide();
             }

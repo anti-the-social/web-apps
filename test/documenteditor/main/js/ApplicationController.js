@@ -1,5 +1,6 @@
 /*
- * (c) Copyright Ascensio System SIA 2010-2023
+ *
+ * (c) Copyright Ascensio System SIA 2010-2019
  *
  * This program is a free software product. You can redistribute it and/or
  * modify it under the terms of the GNU Affero General Public License (AGPL)
@@ -12,7 +13,7 @@
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR  PURPOSE. For
  * details, see the GNU AGPL at: http://www.gnu.org/licenses/agpl-3.0.html
  *
- * You can contact Ascensio System SIA at 20A-6 Ernesta Birznieka-Upish
+ * You can contact Ascensio System SIA at 20A-12 Ernesta Birznieka-Upisha
  * street, Riga, Latvia, EU, LV-1050.
  *
  * The  interactive user interfaces in modified source and object code versions
@@ -28,7 +29,7 @@
  * Creative Commons Attribution-ShareAlike 4.0 International. See the License
  * terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
  *
- */
+*/
 DE.ApplicationController = new(function(){
     var me,
         api,
@@ -40,6 +41,18 @@ DE.ApplicationController = new(function(){
         bodyWidth = 0;
 
     var LoadingDocument = -256;
+
+    // Check browser
+    // -------------------------
+
+    if (typeof isBrowserSupported !== 'undefined' && !isBrowserSupported()){
+        console.error(this.unsupportedBrowserErrorText);
+        return;
+    }
+
+    common.localStorage.setId('text');
+    common.localStorage.setKeysFilter('de-,asc.text');
+    common.localStorage.sync();
 
     // Handlers
     // -------------------------
@@ -58,7 +71,14 @@ DE.ApplicationController = new(function(){
                 docInfo = new Asc.asc_CDocInfo(),
                 _user = new Asc.asc_CUserInfo();
 
-            var user = common.utils.fillUserInfo(config.user, config.lang, me.textAnonymous, ('uid-' + Date.now()));
+            var canRenameAnonymous = !((typeof (config.customization) == 'object') && (typeof (config.customization.anonymous) == 'object') && (config.customization.anonymous.request===false)),
+                guestName = (typeof (config.customization) == 'object') && (typeof (config.customization.anonymous) == 'object') &&
+                            (typeof (config.customization.anonymous.label) == 'string') && config.customization.anonymous.label.trim()!=='' ?
+                            common.utils.htmlEncode(config.customization.anonymous.label) : me.textGuest,
+                value = canRenameAnonymous ? common.localStorage.getItem("guest-username") : null;//,
+                user = common.utils.fillUserInfo(config.user, config.lang, value ? (value + ' (' + guestName + ')' ) : me.textAnonymous,
+                                                 common.localStorage.getItem("guest-id") || ('uid-' + Date.now()));
+            user.anonymous && common.localStorage.setItem("guest-id", user.id);
 
             _user.put_Id(user.id);
             _user.put_FullName(user.fullname);
@@ -251,6 +271,7 @@ DE.ApplicationController = new(function(){
     }
 
     function onBeforeUnload () {
+        common.localStorage.save();
     }
 
     function onDocumentResize() {

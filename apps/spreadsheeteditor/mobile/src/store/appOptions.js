@@ -123,6 +123,5 @@ export class storeAppOptions {
         this.canUseUserInfoPermissions && AscCommon.UserInfoParser.setUserInfoPermissions(permissions.userInfoGroups);
 
         this.canLiveView = !!params.asc_getLiveViewerSupport() && (this.config.mode === 'view') && isSupportEditFeature;
-        this.isAnonymousSupport = !!Common.EditorApi.get().asc_isAnonymousSupport();
     }
 }

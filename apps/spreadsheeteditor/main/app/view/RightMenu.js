@@ -1,5 +1,6 @@
 /*
- * (c) Copyright Ascensio System SIA 2010-2023
+ *
+ * (c) Copyright Ascensio System SIA 2010-2019
  *
  * This program is a free software product. You can redistribute it and/or
  * modify it under the terms of the GNU Affero General Public License (AGPL)
@@ -12,7 +13,7 @@
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR  PURPOSE. For
  * details, see the GNU AGPL at: http://www.gnu.org/licenses/agpl-3.0.html
  *
- * You can contact Ascensio System SIA at 20A-6 Ernesta Birznieka-Upish
+ * You can contact Ascensio System SIA at 20A-12 Ernesta Birznieka-Upisha
  * street, Riga, Latvia, EU, LV-1050.
  *
  * The  interactive user interfaces in modified source and object code versions
@@ -28,7 +29,7 @@
  * Creative Commons Attribution-ShareAlike 4.0 International. See the License
  * terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
  *
- */
+*/
 /**
  *  RightMenu.js
  *
@@ -80,7 +81,6 @@ define([
                 asctype: Common.Utils.documentSettingsType.Paragraph,
                 enableToggle: true,
                 disabled: true,
-                iconCls: 'btn-paragraph',
                 toggleGroup: 'tabpanelbtnsGroup',
                 allowMouseEventsOnDisabled: true
             });
@@ -89,7 +89,6 @@ define([
                 asctype: Common.Utils.documentSettingsType.Image,
                 enableToggle: true,
                 disabled: true,
-                iconCls: 'btn-menu-image',
                 toggleGroup: 'tabpanelbtnsGroup',
                 allowMouseEventsOnDisabled: true
             });
@@ -98,7 +97,6 @@ define([
                 asctype: Common.Utils.documentSettingsType.Chart,
                 enableToggle: true,
                 disabled: true,
-                iconCls: 'btn-menu-chart',
                 toggleGroup: 'tabpanelbtnsGroup',
                 allowMouseEventsOnDisabled: true
             });
@@ -107,7 +105,6 @@ define([
                 asctype: Common.Utils.documentSettingsType.Shape,
                 enableToggle: true,
                 disabled: true,
-                iconCls: 'btn-menu-shape',
                 toggleGroup: 'tabpanelbtnsGroup',
                 allowMouseEventsOnDisabled: true
             });
@@ -117,7 +114,6 @@ define([
                 asctype: Common.Utils.documentSettingsType.TextArt,
                 enableToggle: true,
                 disabled: true,
-                iconCls: 'btn-menu-textart',
                 toggleGroup: 'tabpanelbtnsGroup',
                 allowMouseEventsOnDisabled: true
             });
@@ -127,7 +123,6 @@ define([
                 asctype: Common.Utils.documentSettingsType.Table,
                 enableToggle: true,
                 disabled: true,
-                iconCls: 'btn-menu-table',
                 toggleGroup: 'tabpanelbtnsGroup',
                 allowMouseEventsOnDisabled: true
             });
@@ -137,7 +132,6 @@ define([
                 asctype: Common.Utils.documentSettingsType.Pivot,
                 enableToggle: true,
                 disabled: true,
-                iconCls: 'btn-pivot-sum',
                 visible: false,
                 toggleGroup: 'tabpanelbtnsGroup',
                 allowMouseEventsOnDisabled: true
@@ -147,7 +141,6 @@ define([
                 asctype: Common.Utils.documentSettingsType.Cell,
                 enableToggle: true,
                 disabled: true,
-                iconCls: 'btn-menu-cell',
                 toggleGroup: 'tabpanelbtnsGroup',
                 allowMouseEventsOnDisabled: true
             });
@@ -156,7 +149,6 @@ define([
                 asctype: Common.Utils.documentSettingsType.Slicer,
                 enableToggle: true,
                 disabled: true,
-                iconCls: 'btn-slicer',
                 toggleGroup: 'tabpanelbtnsGroup',
                 allowMouseEventsOnDisabled: true
             });
@@ -225,7 +217,6 @@ define([
                     asctype: Common.Utils.documentSettingsType.Signature,
                     enableToggle: true,
                     disabled: true,
-                    iconCls: 'btn-menu-signature',
                     toggleGroup: 'tabpanelbtnsGroup',
                     allowMouseEventsOnDisabled: true
                 });
@@ -259,15 +250,14 @@ define([
 
         setApi: function(api) {
             this.api = api;
-            var _isEyedropperStart = function (isStart) {this._isEyedropperStart = isStart;};
             this.paragraphSettings.setApi(api);
             this.imageSettings.setApi(api);
             this.chartSettings.setApi(api);
-            this.shapeSettings.setApi(api).on('eyedropper', _.bind(_isEyedropperStart, this));
-            this.textartSettings.setApi(api).on('eyedropper', _.bind(_isEyedropperStart, this));
+            this.shapeSettings.setApi(api);
+            this.textartSettings.setApi(api);
             this.tableSettings.setApi(api);
             this.pivotSettings.setApi(api);
-            this.cellSettings.setApi(api).on('eyedropper', _.bind(_isEyedropperStart, this));
+            this.cellSettings.setApi(api);
             this.slicerSettings.setApi(api);
             if (this.signatureSettings) this.signatureSettings.setApi(api);
             return this;

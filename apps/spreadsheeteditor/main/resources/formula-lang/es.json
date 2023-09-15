@@ -472,12 +472,6 @@
 	"WRAPCOLS": "AJUSTARCOLS",
 	"TAKE": "TOMAR",
 	"DROP": "EXCLUIR",
-	"SEQUENCE": "SECUENCIA",
-	"EXPAND": "EXPANDIR",
-	"XMATCH": "COINCIDIRX",
-	"FILTER": "FILTRAR",
-	"ARRAYTOTEXT": "MATRIZATEXTO",
-	"SORT": "ORDENAR",
 	"LocalFormulaOperands": {
 		"StructureTables": {
 			"h": "Encabezados",

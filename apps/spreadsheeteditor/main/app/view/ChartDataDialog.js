@@ -1,5 +1,6 @@
 /*
- * (c) Copyright Ascensio System SIA 2010-2023
+ *
+ * (c) Copyright Ascensio System SIA 2010-2020
  *
  * This program is a free software product. You can redistribute it and/or
  * modify it under the terms of the GNU Affero General Public License (AGPL)
@@ -12,7 +13,7 @@
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR  PURPOSE. For
  * details, see the GNU AGPL at: http://www.gnu.org/licenses/agpl-3.0.html
  *
- * You can contact Ascensio System SIA at 20A-6 Ernesta Birznieka-Upish
+ * You can contact Ascensio System SIA at 20A-12 Ernesta Birznieka-Upisha
  * street, Riga, Latvia, EU, LV-1050.
  *
  * The  interactive user interfaces in modified source and object code versions
@@ -49,8 +50,7 @@ define([
     SSE.Views.ChartDataDialog = Common.Views.AdvancedSettingsWindow.extend(_.extend({
         options: {
             contentWidth: 370,
-            height: 490,
-            id: 'window-chart-data'
+            height: 490
         },
 
         initialize : function(options) {
@@ -81,12 +81,12 @@ define([
                                 '</tr>',
                                 '<tr>',
                                     '<td class="padding-large">',
-                                        '<button type="button" class="btn btn-text-default auto" id="chart-dlg-btn-add">', me.textAdd, '</button>',
-                                        '<button type="button" class="btn btn-text-default auto" id="chart-dlg-btn-edit">', me.textEdit, '</button>',
-                                        '<button type="button" class="btn btn-text-default auto" id="chart-dlg-btn-delete">', me.textDelete, '</button>',
-                                        '<div class="up-down-btns">',
-                                        '<div id="chart-dlg-btn-up"></div>',
-                                        '<div id="chart-dlg-btn-down"></div>',
+                                        '<button type="button" class="btn btn-text-default auto" id="chart-dlg-btn-add" style="min-width: 70px;margin-right:5px;">', me.textAdd, '</button>',
+                                        '<button type="button" class="btn btn-text-default auto" id="chart-dlg-btn-edit" style="min-width: 70px;margin-right:5px;">', me.textEdit, '</button>',
+                                        '<button type="button" class="btn btn-text-default auto" id="chart-dlg-btn-delete" style="min-width: 70px;margin-right:5px;">', me.textDelete, '</button>',
+                                        '<div style="display: inline-block; float: right;">',
+                                        '<div id="chart-dlg-btn-up" style="display: inline-block;margin-right: 2px;"></div>',
+                                        '<div id="chart-dlg-btn-down" style="display: inline-block;"></div>',
                                         '</div>',
                                     '</td>',
                                 '</tr>',
@@ -124,15 +124,11 @@ define([
             this.api = this.options.api;
             this.chartSettings = this.options.chartSettings;
             this.currentChartType = Asc.c_oAscChartTypeSettings.barNormal;
-
-            this._isOpen = false;
         },
 
         render: function() {
             Common.Views.AdvancedSettingsWindow.prototype.render.call(this);
             var me = this;
-
-            this.on('animate:after', _.bind(this.onAnimateAfter, this));
 
             this.txtDataRange = new Common.UI.InputFieldBtn({
                 el          : $('#chart-dlg-txt-range'),
@@ -154,7 +150,7 @@ define([
                 store: new Common.UI.DataViewStore(),
                 emptyText: '',
                 scrollAlwaysVisible: true,
-                itemTemplate: _.template('<div id="<%= id %>" class="list-item" style="min-height: 15px;"><%= Common.Utils.String.htmlEncode(value) %></div>'),
+                itemTemplate: _.template('<div id="<%= id %>" class="list-item" style="min-height: 15px;"><%= value %></div>'),
                 tabindex:1
             });
             this.seriesList.onKeyDown = _.bind(this.onListKeyDown, this, 'series');
@@ -182,7 +178,6 @@ define([
                 parentEl: $('#chart-dlg-btn-up'),
                 cls: 'btn-toolbar bg-white',
                 iconCls: 'caret-up',
-                scaling: false,
                 hint: this.textUp
             });
             this.btnUp.on('click', _.bind(this.onMoveClick, this, true));
@@ -191,7 +186,6 @@ define([
                 parentEl: $('#chart-dlg-btn-down'),
                 cls: 'btn-toolbar bg-white',
                 iconCls: 'caret-down',
-                scaling: false,
                 hint: this.textDown
             });
             this.btnDown.on('click', _.bind(this.onMoveClick, this, false));
@@ -206,7 +200,7 @@ define([
                 store: new Common.UI.DataViewStore(),
                 emptyText: '',
                 scrollAlwaysVisible: true,
-                itemTemplate: _.template('<div id="<%= id %>" class="list-item" style="min-height: 15px;"><%= Common.Utils.String.htmlEncode(value) %></div>'),
+                itemTemplate: _.template('<div id="<%= id %>" class="list-item" style="min-height: 15px;"><%= value %></div>'),
                 tabindex:1
             });
 
@@ -230,16 +224,7 @@ define([
             this._setDefaults(this.chartSettings);
         },
 
-        onAnimateAfter: function () {
-            if (this.chartSettings && !this._isOpen) {
-                this.updateCategoryList(this.chartSettings.getCatValues(), true);
-                this._isOpen = true;
-            }
-        },
-
         close: function () {
-            this.clearCategoryListTimer();
-
             this.api.asc_onCloseChartFrame();
             Common.Views.AdvancedSettingsWindow.prototype.close.apply(this, arguments);
         },
@@ -527,58 +512,20 @@ define([
             (len>0) && this.seriesList.selectByIndex(Math.min(index || 0, store.length-1));
         },
 
-        updateCategoryList: function(categories, afterAnimate) {
-            this.clearCategoryListTimer();
-
-            var me = this,
-                store = this.categoryList.store,
-                len = categories.length;
-            var getModels = function (data) {
-                var models = [];
-                for (var i = 0, len = data.length; i < len; i++) {
-                    var item = data[i],
-                        rec = new Common.UI.DataViewModel();
-                    rec.set({
-                        value: item
-                    });
-                    models.push(rec);
-                }
-                return models;
+        updateCategoryList: function(categories) {
+            var arr = [];
+            var store = this.categoryList.store;
+            for (var i = 0, len = categories.length; i < len; i++)
+            {
+                var item = categories[i],
+                    rec = new Common.UI.DataViewModel();
+                rec.set({
+                    value: item
+                });
+                arr.push(rec);
             }
-            var loadCategoryList = function (index) {
-                me._categoryListIndex = index;
-                me._loadCategoryListTimer = setInterval(function() {
-                    if (me._categoryListIndex + 1 >= len) {
-                        me.clearCategoryListTimer();
-                        return;
-                    }
-                    store.add(getModels(categories.slice(me._categoryListIndex, me._categoryListIndex + 10)));
-                    me._categoryListIndex += 10;
-                }, 10);
-            }
-            if (!afterAnimate) {
-                if (categories.length < 10) {
-                    store.reset(getModels(categories));
-                } else {
-                    store.reset(getModels(categories.slice(0, 9)));
-
-                    if (this._isOpen) {
-                        _.defer(function () {
-                            loadCategoryList(10);
-                        }, 0);
-                    }
-                }
-                (len>0) && this.categoryList.selectByIndex(0);
-            } else if (len > store.length) {
-                loadCategoryList(10);
-            }
-        },
-
-        clearCategoryListTimer: function () {
-            if (this._loadCategoryListTimer) {
-                clearInterval(this._loadCategoryListTimer);
-                this._loadCategoryListTimer = undefined;
-            }
+            store.reset(arr);
+            (len>0) && this.categoryList.selectByIndex(0);
         },
 
         onSwitch: function() {

@@ -19,28 +19,9 @@
         border-bottom: @scaled-one-px-value solid @border-toolbar;
 
         label {
-            .font-size-medium();
+            font-size: 12px;
             .font-weight-bold();
             margin-top: 2px;
-        }
-
-        #comments-btn-close {
-            float: right;
-            margin-left: 4px;
-
-            .rtl & {
-                float: left;
-                margin-left: 0;
-                margin-right: 4px;
-            }
-        }
-
-        #comments-btn-sort {
-            float: right;
-
-            .rtl & {
-                float: left;
-            }
         }
     }
 
@@ -63,11 +44,6 @@
             margin-top: 5px;
             margin-bottom: 5px;
             right: 4px !important;
-
-            .rtl & {
-                right: unset !important;
-                left: 4px !important;
-            }
         }
 
         .dataview-ct.inner {
@@ -94,7 +70,7 @@
         label {
             color: @text-normal-ie;
             color: @text-normal;
-            .font-size-medium();
+            font-size: 12px;
             line-height: normal;
             border-bottom: @scaled-one-px-value-ie dotted @text-normal-ie;
             border-bottom: @scaled-one-px-value dotted @text-normal;
@@ -117,7 +93,7 @@
         }
 
         textarea {
-            .font-size-medium();
+            font-size: 12px;
             width: 100%;
             resize: none;
             margin-bottom: 5px;
@@ -134,19 +110,9 @@
     .btn {
         &.add {
             margin-left: 20px;
-
-            .rtl & {
-                margin-left: 0;
-                margin-right: 20px;
-            }
         }
         &.cancel {
             margin-left: 7px;
-
-            .rtl & {
-                margin-left: 0;
-                margin-right: 7px;
-            }
         }
     }
 }
@@ -154,7 +120,7 @@
 .dataview-ct {
     width: 100%;
     height: 100%;
-    .font-size-medium();
+    font-size: 12px;
     line-height: normal;
     position: relative;
     overflow: hidden;
@@ -201,7 +167,7 @@
     .user-name {
         color: @text-normal-ie;
         color: @text-normal;
-        .font-size-medium();
+        font-size: 12px;
         .font-weight-bold();
         overflow: hidden;
         text-overflow: ellipsis;
@@ -209,10 +175,6 @@
         padding: 10px 65px 0 0px;
         height: 26px;
         cursor: default;
-
-        .rtl & {
-            padding: 10px 0px 0 65px;
-        }
     }
 
     .color {
@@ -222,10 +184,6 @@
         border: @scaled-one-px-value solid @border-toolbar;
         margin: 0 5px 3px 0;
         vertical-align: middle;
-
-        .rtl & {
-            margin: 0 0 3px 5px;
-        }
     }
 
     .user-name-colored {
@@ -239,8 +197,7 @@
             background-color: #ee3525;
             padding: 3px 10px;
             color: #ffffff;
-            //font: 11px arial;
-            .font-size-normal();
+            font: 11px arial;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -248,10 +205,10 @@
     }
 
     .user-date {
-        .font-size-normal();
+        font-size: 11px;
         white-space: nowrap;
         padding: 0;
-        //height: 12px;
+        height: 12px;
         overflow: hidden;
         text-overflow: ellipsis;
         cursor: default;
@@ -302,16 +259,6 @@
         border-bottom: @scaled-one-px-value dotted @text-normal;
         height: 16px;
         cursor: pointer;
-
-        &.with-reply {
-            margin-top: 5px;
-            margin-left: 20px;
-
-            .rtl & {
-                margin-left: 0;
-                margin-right: 20px;
-            }
-        }
     }
 
     .msg-reply {
@@ -325,12 +272,6 @@
         top: 0;
         margin: 11px 21px 10px 10px;
         height: 20px;
-
-        .rtl & {
-            right: unset;
-            left: 0;
-            margin: 11px 10px 10px 21px;
-        }
     }
 
     .btns-reply-ct {
@@ -339,31 +280,17 @@
         top: 0;
         height: 30px;
         margin-top: 11px;
-
-        .rtl & {
-            right: unset;
-            left: 0;
-        }
     }
 
     .reply-item-ct {
         position: relative;
         padding-bottom: 10px;
         padding-left: 20px;
-
-        .rtl & {
-            padding-left: 0;
-            padding-right: 20px;
-        }
     }
 
     div[class^=btn-] {
         float: left;
         cursor: pointer;
-
-        .rtl & {
-            float: right;
-        }
     }
 
     .btn-edit,.btn-delete, .btn-resolve, .icon-resolve, .btn-resolve-check, .btn-accept, .btn-reject, .btn-goto {
@@ -371,10 +298,6 @@
         height: 16px;
         margin: 0 0 0 5px;
         background-color: transparent;
-
-        .rtl & {
-            margin: 0 5px 0 0;
-        }
     }
 
     .icon-resolve {
@@ -485,10 +408,6 @@
 
         .btn-inner-close {
             margin-left: 7px;
-            .rtl & {
-                margin-left: 0;
-                margin-right: 7px;
-            }
         }
     }
 
@@ -497,10 +416,6 @@
 
         .btn-close {
             margin-left: 7px;
-            .rtl & {
-                margin-left: 0;
-                margin-right: 7px;
-            }
         }
     }
     .reply-inner-ct {
@@ -548,7 +463,7 @@
         min-width: 100px;
         text-align: center;
         cursor: pointer;
-        .font-size-normal();
+        font-size: 11px;
         font-family: @font-family-base;
     }
 
@@ -605,11 +520,6 @@
         transform: rotate(45deg);
         border: solid @scaled-one-px-value-ie @border-toolbar-ie;
         border: solid @scaled-one-px-value @border-toolbar;
-
-        .rtl & {
-            left: auto;
-            right: 2px;
-        }
     }
 
     &.left {
@@ -617,11 +527,6 @@
         top: 20px;
         width: 10px;
         height: 30px;
-
-        .rtl & {
-            left: auto;
-            right: -10px;
-        }
     }
 
     &.right {
@@ -630,19 +535,9 @@
         width: 10px;
         height: 30px;
 
-        .rtl & {
-            left: auto;
-            right: 100%;
-        }
-
         &:after {
             left: -8px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-
-            .rtl & {
-                left: auto;
-                right: -8px;
-            }
 
             body.safari &,
             body.chrome & {
@@ -657,19 +552,9 @@
         height: 10px;
         width: 30px;
 
-        .rtl & {
-            left: auto;
-            right: 20px;
-        }
-
         &:after {
             top: 2px;
             left: 5px;
-
-            .rtl & {
-                left: auto;
-                right: 5px;
-            }
         }
     }
 
@@ -680,19 +565,9 @@
         height: 10px;
         width: 30px;
 
-        .rtl & {
-            left: auto;
-            right: 20px;
-        }
-
         &:after {
             top: -7px;
             left: 5px;
-
-            .rtl & {
-                left: auto;
-                right: 5px;
-            }
         }
     }
 }

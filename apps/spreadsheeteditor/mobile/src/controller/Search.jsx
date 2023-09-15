@@ -140,33 +140,35 @@ const Search = withTranslation()(props => {
     useEffect(() => {
         if (f7.searchbar.get('.searchbar')?.enabled && Device.phone) {
             const api = Common.EditorApi.get();
-            api.asc_enableKeyEvents(false);
             $$('.searchbar-input').focus();
+            api.asc_enableKeyEvents(false);
         }
     });
 
     const onSearchQuery = params => {
         const api = Common.EditorApi.get();
-
+      
         let lookIn = +params.lookIn === 0;
         let searchIn = +params.searchIn;
         let searchBy = +params.searchBy === 0;
 
-        const options = new Asc.asc_CFindOptions();
+        if (params.find && params.find.length) {
+            let options = new Asc.asc_CFindOptions();
+    
+            options.asc_setFindWhat(params.find);
+            options.asc_setScanForward(params.forward);
+            options.asc_setIsMatchCase(params.caseSensitive);
+            options.asc_setIsWholeCell(params.matchCell);
+            options.asc_setScanOnOnlySheet(searchIn);
+            options.asc_setScanByRows(searchBy);
+            options.asc_setLookIn(lookIn ? Asc.c_oAscFindLookIn.Formulas : Asc.c_oAscFindLookIn.Value);
 
-        options.asc_setFindWhat(params.find);
-        options.asc_setScanForward(params.forward);
-        options.asc_setIsMatchCase(params.caseSensitive);
-        options.asc_setIsWholeCell(params.matchCell);
-        options.asc_setScanOnOnlySheet(searchIn);
-        options.asc_setScanByRows(searchBy);
-        options.asc_setLookIn(lookIn ? Asc.c_oAscFindLookIn.Formulas : Asc.c_oAscFindLookIn.Value);
+            if (params.highlight) api.asc_selectSearchingResults(true);
 
-        if (params.highlight) api.asc_selectSearchingResults(true);
-
-        api.asc_findText(options, function(resultCount) {
-            !resultCount && f7.dialog.alert(null, t('View.Settings.textNoMatches'));
-        });
+            api.asc_findText(options, function(resultCount) {
+                !resultCount && f7.dialog.alert(null, _t.textNoTextFound);
+            });
+        }
     };
 
     const onchangeSearchQuery = params => {
@@ -177,62 +179,50 @@ const Search = withTranslation()(props => {
 
     const onReplaceQuery = params => {
         const api = Common.EditorApi.get();
-
         let lookIn = +params.lookIn === 0;
         let searchIn = +params.searchIn;
         let searchBy = +params.searchBy === 0;
 
-        api.isReplaceAll = false;
+        // if (params.find && params.find.length) {
+            api.isReplaceAll = false;
 
-        const options = new Asc.asc_CFindOptions();
+            let options = new Asc.asc_CFindOptions();
 
-        options.asc_setFindWhat(params.find);
-        options.asc_setReplaceWith(params.replace || '');
-        options.asc_setIsMatchCase(params.caseSensitive);
-        options.asc_setIsWholeCell(params.matchCell);
-        options.asc_setScanOnOnlySheet(searchIn);
-        options.asc_setScanByRows(searchBy);
-        options.asc_setLookIn(lookIn ? Asc.c_oAscFindLookIn.Formulas : Asc.c_oAscFindLookIn.Value);
-        options.asc_setIsReplaceAll(false);
+            options.asc_setFindWhat(params.find);
+            options.asc_setReplaceWith(params.replace || '');
+            options.asc_setIsMatchCase(params.caseSensitive);
+            options.asc_setIsWholeCell(params.matchCell);
+            options.asc_setScanOnOnlySheet(searchIn);
+            options.asc_setScanByRows(searchBy);
+            options.asc_setLookIn(lookIn ? Asc.c_oAscFindLookIn.Formulas : Asc.c_oAscFindLookIn.Value);
+            options.asc_setIsReplaceAll(false);
 
-        api.asc_findText(options, function(resultCount) {
-            if(!resultCount) {
-                f7.dialog.alert(null, t('View.Settings.textNoMatches'));
-                return;
-            }
-            
-            api.asc_replaceText(options, params.replace || '', false);
-        });
+            api.asc_replaceText(options);
+        // }
     }
 
     const onReplaceAllQuery = params => {
         const api = Common.EditorApi.get();
-
         let lookIn = +params.lookIn === 0;
         let searchIn = +params.searchIn;
         let searchBy = +params.searchBy === 0;
 
-        api.isReplaceAll = true;
+        // if (params.find && params.find.length) {
+            api.isReplaceAll = true;
 
-        const options = new Asc.asc_CFindOptions();
+            let options = new Asc.asc_CFindOptions();
 
-        options.asc_setFindWhat(params.find);
-        options.asc_setReplaceWith(params.replace || '');
-        options.asc_setIsMatchCase(params.caseSensitive);
-        options.asc_setIsWholeCell(params.matchCell);
-        options.asc_setScanOnOnlySheet(searchIn);
-        options.asc_setScanByRows(searchBy);
-        options.asc_setLookIn(lookIn ? Asc.c_oAscFindLookIn.Formulas : Asc.c_oAscFindLookIn.Value);
-        options.asc_setIsReplaceAll(true);
+            options.asc_setFindWhat(params.find);
+            options.asc_setReplaceWith(params.replace || '');
+            options.asc_setIsMatchCase(params.caseSensitive);
+            options.asc_setIsWholeCell(params.matchCell);
+            options.asc_setScanOnOnlySheet(searchIn);
+            options.asc_setScanByRows(searchBy);
+            options.asc_setLookIn(lookIn ? Asc.c_oAscFindLookIn.Formulas : Asc.c_oAscFindLookIn.Value);
+            options.asc_setIsReplaceAll(true);
 
-        api.asc_findText(options, function(resultCount) {
-            if(!resultCount) {
-                f7.dialog.alert(null, t('View.Settings.textNoMatches'));
-                return;
-            }
-
-            api.asc_replaceText(options, params.replace || '', true);
-        });
+            api.asc_replaceText(options);
+        // }
     }
 
     return <SESearchView _t={_t} onSearchQuery={onSearchQuery} onchangeSearchQuery={onchangeSearchQuery} onReplaceQuery={onReplaceQuery} onReplaceAllQuery={onReplaceAllQuery} />

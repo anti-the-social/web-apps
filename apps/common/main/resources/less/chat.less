@@ -20,17 +20,12 @@
         margin-top: 5px;
         margin-bottom: 5px;
         right: 4px !important;
-
-        .rtl & {
-            right: unset !important;
-            left: 4px !important;
-        }
     }
 
     #chat-title {
         label {
             padding: 18px 20px;
-            .font-size-large();
+            font-size: @font-size-large;
         }
     }
 
@@ -65,14 +60,10 @@
             height: 12px;
             border: 1px solid @border-toolbar-ie;
             border: 1px solid @border-toolbar;
-
-            .rtl & {
-                margin: 0 0 3px 5px;
-            }
         }
 
         .name {
-            .font-size-medium();
+            font-size: 12px;
             .font-weight-bold();
             display: block;
             padding: 0 10px 0 0;
@@ -89,7 +80,7 @@
         top: 70px;
         right: 0;
         bottom: 110px;
-        .font-size-medium();
+        font-size: 12px;
 
         ul {
             margin: 0;
@@ -114,7 +105,7 @@
                 .user-name {
                     color: @text-normal-ie;
                     color: @text-normal;
-                    .font-size-medium();
+                    font-size: 12px;
                     .font-weight-bold();
                     overflow: hidden;
                     text-overflow: ellipsis;
@@ -128,10 +119,6 @@
                     border: 1px solid @border-toolbar;
                     margin: 0 5px 3px 0;
                     vertical-align: middle;
-
-                    .rtl & {
-                        margin: 0 0 3px 5px;
-                    }
                 }
 
                 .message {
@@ -164,7 +151,7 @@
             margin-bottom: 5px;
             border: 1px solid @border-regular-control-ie;
             border: 1px solid @border-regular-control;
-            .font-size-medium();
+            font-size: 12px;
 
             &:focus {
                 border-color: @border-control-focus-ie;

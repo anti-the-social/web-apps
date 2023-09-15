@@ -472,12 +472,6 @@
 	"WRAPCOLS": "SPALTENUMBRUCH",
 	"TAKE": "ÜBERNEHMEN",
 	"DROP": "WEGLASSEN",
-	"SEQUENCE": "SEQUENZ",
-	"EXPAND": "ERWEITERN",
-	"XMATCH": "XVERGLEICH",
-	"FILTER": "FILTER",
-	"ARRAYTOTEXT": "MATRIXZUTEXT",
-	"SORT": "SORTIEREN",
 	"LocalFormulaOperands": {
 		"StructureTables": {
 			"h": "Kopfzeilen",

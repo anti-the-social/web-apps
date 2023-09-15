@@ -1,5 +1,6 @@
 /*
- * (c) Copyright Ascensio System SIA 2010-2023
+ *
+ * (c) Copyright Ascensio System SIA 2010-2019
  *
  * This program is a free software product. You can redistribute it and/or
  * modify it under the terms of the GNU Affero General Public License (AGPL)
@@ -12,7 +13,7 @@
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR  PURPOSE. For
  * details, see the GNU AGPL at: http://www.gnu.org/licenses/agpl-3.0.html
  *
- * You can contact Ascensio System SIA at 20A-6 Ernesta Birznieka-Upish
+ * You can contact Ascensio System SIA at 20A-12 Ernesta Birznieka-Upisha
  * street, Riga, Latvia, EU, LV-1050.
  *
  * The  interactive user interfaces in modified source and object code versions
@@ -28,7 +29,7 @@
  * Creative Commons Attribution-ShareAlike 4.0 International. See the License
  * terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
  *
- */
+*/
 /**
  *  ComboDataView.js
  *
@@ -367,10 +368,7 @@ define([
             if (menu.cmpEl) {
                 menu.menuAlignEl = this.cmpEl;
                 var offset = this.cmpEl.width() - this.openButton.$el.width() - this.menuWidth + 1;
-                if (Common.UI.isRTL()) {
-                    offset = this.openButton.$el.width() - 1;
-                }
-                menu.setOffset(Common.UI.isRTL() ? offset : Math.min(offset, 0));
+                menu.setOffset(Math.min(offset, 0));
             }
 
             if (this.options.hint) {

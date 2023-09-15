@@ -6,21 +6,21 @@ import { f7 } from 'framework7-react';
 import { useTranslation } from 'react-i18next';
 import { Device } from '../../../../common/mobile/utils/device';
 
-const StatusbarController = inject('storeWorksheets', 'storeFocusObjects', 'users')(observer(props => {
-    const {storeWorksheets, storeFocusObjects, users} = props;
+const StatusbarController = inject('sheets', 'storeFocusObjects', 'users')(observer(props => {
+    const {sheets, storeFocusObjects, users} = props;
  
     useEffect(() => {
         Common.Notifications.on('engineCreated', api => {
             api.asc_registerCallback('asc_onWorkbookLocked', (locked) => {
-                storeWorksheets.setWorkbookLocked(locked);
+                sheets.setWorkbookLocked(locked);
                 storeFocusObjects.setIsLocked(api.asc_getCellInfo());
             });
             api.asc_registerCallback('asc_onWorksheetLocked', (index, locked) => {
-                storeWorksheets.setWorksheetLocked(index, locked);
+                sheets.setWorksheetLocked(index, locked);
                 storeFocusObjects.setIsLocked(api.asc_getCellInfo());
             });
             api.asc_registerCallback('asc_onChangeProtectWorkbook', () => {
-                storeWorksheets.setProtectedWorkbook(api.asc_isProtectedWorkbook());
+                sheets.setProtectedWorkbook(api.asc_isProtectedWorkbook());
             });
             api.asc_registerCallback('asc_onEditCell', onApiEditCell);
             api.asc_registerCallback('asc_onSheetsChanged', onApiSheetsChanged);
@@ -35,7 +35,7 @@ const StatusbarController = inject('storeWorksheets', 'storeFocusObjects', 'user
 
     const onApiEditCell = state => {
         let isDisable = state !== Asc.c_oAscCellEditorState.editEnd;
-        storeWorksheets.setDisabledEditSheet(isDisable);
+        sheets.setDisabledEditSheet(isDisable);
     }
 
     const onApiDisconnect = () => {
@@ -62,12 +62,13 @@ const StatusbarController = inject('storeWorksheets', 'storeFocusObjects', 'user
             items.push(tab);
         }
 
-        storeWorksheets.resetSheets(items);
+        sheets.resetSheets(items);
+        setTimeout(() => updateTabsColors());
     };
 
     const onApiActiveSheetChanged = (index) => {
-        if (index < storeWorksheets.sheets.length) {
-            storeWorksheets.setActiveWorksheet(index);
+        if (index < sheets.sheets.length) {
+            sheets.setActiveWorksheet(index);
             Common.Notifications.trigger('sheet:active', index);
         }
     };
@@ -76,13 +77,19 @@ const StatusbarController = inject('storeWorksheets', 'storeFocusObjects', 'user
         f7.popover.close('.document-menu.modal-in', false);
     }
 
-    const onApiUpdateTabColor = sheetindex => {
+
+    const loadTabColor = sheetindex => {
         const api = Common.EditorApi.get();
-        let tab = storeWorksheets.sheets.find(sheet => sheet.index === sheetindex);
+        let tab = sheets.sheets.find(sheet => sheet.index === sheetindex);
 
         if (tab) {
             setTabLineColor(tab, api.asc_getWorksheetTabColor(sheetindex));
         }
+        
+    };
+
+    const onApiUpdateTabColor = index => {
+        loadTabColor(index);
     };
 
     const setTabLineColor = (tab, color) => {
@@ -106,17 +113,25 @@ const StatusbarController = inject('storeWorksheets', 'storeFocusObjects', 'user
         }
     };
 
+    const updateTabsColors = () => {
+        const api = Common.EditorApi.get();
+
+        sheets.sheets.forEach(model => {
+            setTabLineColor(model, api.asc_getWorksheetTabColor(model.index));
+        });
+    };
+
     return null;
 }));
 
-const Statusbar = inject('storeWorksheets', 'storeAppOptions', 'users')(observer(props => {
-    const {storeWorksheets, storeAppOptions, users} = props;
+const Statusbar = inject('sheets', 'storeAppOptions', 'users')(observer(props => {
+    const {sheets, storeAppOptions, users} = props;
     const {t} = useTranslation();
     const _t = t('Statusbar', {returnObjects: true});
     const isEdit = storeAppOptions.isEdit;
     const isDisconnected = users.isDisconnected;
-    const isProtectedWorkbook = storeWorksheets.isProtectedWorkbook;
-    const isDisabledEditSheet = storeWorksheets.isDisabledEditSheet;
+    const isProtectedWorkbook = sheets.isProtectedWorkbook;
+    const isDisabledEditSheet = sheets.isDisabledEditSheet;
     const targetRef = useRef();
 
     useEffect(() => {
@@ -132,11 +147,11 @@ const Statusbar = inject('storeWorksheets', 'storeAppOptions', 'users')(observer
     }, []);
 
     const onTabClicked = i => {
-        const model = storeWorksheets.at(i);
+        const model = sheets.at(i);
         const api = Common.EditorApi.get();
 
         api.asc_showWorksheet(model.index);
-        storeWorksheets.setActiveWorksheet(i);
+        sheets.setActiveWorksheet(i);
 
         Common.Notifications.trigger('sheet:active', model.index);
     };
@@ -166,7 +181,7 @@ const Statusbar = inject('storeWorksheets', 'storeAppOptions', 'users')(observer
 
     const onTabClick = (i, target) => {
         const api = Common.EditorApi.get();
-        const model = storeWorksheets.at(i);
+        const model = sheets.at(i);
         targetRef.current = target;
 
         let opened = $$('.document-menu.modal-in').length;
@@ -190,9 +205,9 @@ const Statusbar = inject('storeWorksheets', 'storeAppOptions', 'users')(observer
 
     const deleteWorksheet = () => {
         const api = Common.EditorApi.get();
-        const visibleSheets = storeWorksheets.visibleWorksheets();
+        const visibleSheets = sheets.visibleWorksheets();
 
-        if (storeWorksheets.sheets.length == 1 || visibleSheets.length == 1) {
+        if (sheets.sheets.length == 1 || visibleSheets.length == 1) {
             f7.dialog.alert(_t.textErrorLastSheet, _t.notcriticalErrorTitle);
         } else {
             f7.dialog.create({
@@ -290,7 +305,7 @@ const Statusbar = inject('storeWorksheets', 'storeAppOptions', 'users')(observer
 
     const hideWorksheet = (hide, index) => {
         const api = Common.EditorApi.get();
-        const visibleSheets = storeWorksheets.visibleWorksheets();
+        const visibleSheets = sheets.visibleWorksheets();
 
         if(hide) {
             visibleSheets.length == 1 ? 
@@ -304,7 +319,7 @@ const Statusbar = inject('storeWorksheets', 'storeAppOptions', 'users')(observer
 
     const onTabMenu = (event) => {
         const api = Common.EditorApi.get();
-        let index = storeWorksheets.sheets.find(sheet => sheet.active).index;
+        let index = sheets.sheets.find(sheet => sheet.active).index;
 
         f7.popover.close('.document-menu.modal-in', false);
 
@@ -370,7 +385,7 @@ const Statusbar = inject('storeWorksheets', 'storeAppOptions', 'users')(observer
             if (arrIndex) {
                 if(color === 'transparent') {
                     api.asc_setWorksheetTabColor(null, arrIndex);
-                    storeWorksheets.sheets.forEach(tab => {
+                    sheets.sheets.forEach(tab => {
                         if(tab.active) $$(`.sheet-tabs .tab a.tab-color-${tab.index}`).css('box-shadow', '');
                     })
                 } else {
@@ -380,7 +395,7 @@ const Statusbar = inject('storeWorksheets', 'storeAppOptions', 'users')(observer
                     }
                 }
             }
-            storeWorksheets.sheets[active_index].color = api.asc_getWorksheetTabColor(active_index);
+            sheets.sheets[active_index].color = api.asc_getWorksheetTabColor(active_index);
         }
     }
 

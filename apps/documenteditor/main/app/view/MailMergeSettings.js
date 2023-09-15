@@ -1,5 +1,6 @@
 /*
- * (c) Copyright Ascensio System SIA 2010-2023
+ *
+ * (c) Copyright Ascensio System SIA 2010-2019
  *
  * This program is a free software product. You can redistribute it and/or
  * modify it under the terms of the GNU Affero General Public License (AGPL)
@@ -12,7 +13,7 @@
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR  PURPOSE. For
  * details, see the GNU AGPL at: http://www.gnu.org/licenses/agpl-3.0.html
  *
- * You can contact Ascensio System SIA at 20A-6 Ernesta Birznieka-Upish
+ * You can contact Ascensio System SIA at 20A-12 Ernesta Birznieka-Upisha
  * street, Riga, Latvia, EU, LV-1050.
  *
  * The  interactive user interfaces in modified source and object code versions
@@ -28,7 +29,7 @@
  * Creative Commons Attribution-ShareAlike 4.0 International. See the License
  * terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
  *
- */
+*/
 /**
  * User: Julia.Radzhabova
  * Date: 20.02.15
@@ -196,7 +197,7 @@ define([
             this.btnFirst = new Common.UI.Button({
                 parentEl: $('#mmerge-button-first', me.$el),
                 cls: 'btn-toolbar',
-                iconCls: 'toolbar__icon ' + (!Common.UI.isRTL() ? 'btn-firstitem' : 'btn-lastitem'),
+                iconCls: 'toolbar__icon btn-firstitem',
                 disabled: true,
                 value: 0,
                 hint: this.txtFirst,
@@ -210,7 +211,7 @@ define([
             this.btnPrev = new Common.UI.Button({
                 parentEl: $('#mmerge-button-prev', me.$el),
                 cls: 'btn-toolbar',
-                iconCls: 'toolbar__icon ' + (!Common.UI.isRTL() ? 'btn-previtem' : 'btn-nextitem'),
+                iconCls: 'toolbar__icon btn-previtem',
                 disabled: true,
                 value: 1,
                 hint: this.txtPrev,
@@ -224,7 +225,7 @@ define([
             this.btnNext = new Common.UI.Button({
                 parentEl: $('#mmerge-button-next', me.$el),
                 cls: 'btn-toolbar',
-                iconCls: 'toolbar__icon ' + (!Common.UI.isRTL() ? 'btn-nextitem' : 'btn-previtem'),
+                iconCls: 'toolbar__icon btn-nextitem',
                 value: 2,
                 hint: this.txtNext,
                 lock: [_set.noRecipients, _set.lostConnect],
@@ -237,7 +238,7 @@ define([
             this.btnLast = new Common.UI.Button({
                 parentEl: $('#mmerge-button-last', me.$el),
                 cls: 'btn-toolbar',
-                iconCls: 'toolbar__icon ' + (!Common.UI.isRTL() ? 'btn-lastitem' : 'btn-firstitem'),
+                iconCls: 'toolbar__icon btn-lastitem',
                 value: 3,
                 hint: this.txtLast,
                 lock: [_set.noRecipients, _set.lostConnect],
@@ -432,7 +433,7 @@ define([
                 if (this.btnInsField.menu.items.length<1) {
                     _.each(this._state.fieldsList, function(field, index) {
                         var mnu = new Common.UI.MenuItem({
-                            caption: '«' + Common.Utils.String.htmlEncode(field) + '»',
+                            caption: '«' + field + '»',
                             field: field
                         }).on('click', function(item, e) {
                             if (me.api) {
@@ -852,7 +853,7 @@ define([
                 chat: false,
                 review: true,
                 viewport: false,
-                documentHolder: {clear: false, disable: true},
+                documentHolder: true,
                 toolbar: true,
                 plugins: false,
                 protect: false

@@ -1,5 +1,6 @@
 /*
- * (c) Copyright Ascensio System SIA 2010-2023
+ *
+ * (c) Copyright Ascensio System SIA 2010-2019
  *
  * This program is a free software product. You can redistribute it and/or
  * modify it under the terms of the GNU Affero General Public License (AGPL)
@@ -12,7 +13,7 @@
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR  PURPOSE. For
  * details, see the GNU AGPL at: http://www.gnu.org/licenses/agpl-3.0.html
  *
- * You can contact Ascensio System SIA at 20A-6 Ernesta Birznieka-Upish
+ * You can contact Ascensio System SIA at 20A-12 Ernesta Birznieka-Upisha
  * street, Riga, Latvia, EU, LV-1050.
  *
  * The  interactive user interfaces in modified source and object code versions
@@ -28,7 +29,7 @@
  * Creative Commons Attribution-ShareAlike 4.0 International. See the License
  * terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
  *
- */
+*/
 /**
  *  ThemeColorPalette.js
  *
@@ -58,44 +59,42 @@ define([
             transparent: false,
             value: '000000',
             enableKeyEvents: true,
-            colorHints: true,
-            keyMoveDirection: 'both', // 'vertical', 'horizontal',
-            storageSuffix: ''
+            keyMoveDirection: 'both' // 'vertical', 'horizontal'
         },
 
         template    :
             _.template(
-                '<div class="palette-inner">' +
+                '<div style="padding: 4px 0 0 12px;">' +
                 '<% var me = this; var idx = 0; %>' +
                 '<% $(colors).each(function(num, item) { %>' +
-                    '<% if (me.isBlankSeparator(item)) { %> <div class="palette-color-spacer"></div>' +
-                    '<% } else if (me.isSeparator(item)) { %> </div><div class="divider"></div><div style="padding: 12px;">' +
+                    '<% if (me.isBlankSeparator(item)) { %> <div class="palette-color-spacer" style="width:100%;height:8px;float:left;"></div>' +
+                    '<% } else if (me.isSeparator(item)) { %> </div><div class="divider" style="width:100%;float:left;"></div><div style="padding: 12px;">' +
                     '<% } else if (me.isColor(item)) { %> ' +
-                        '<a class="palette-color color-<%=item%>" data-toggle="tooltip" style="background:#<%=item%>" idx="<%=idx++%>">' +
+                        '<a class="palette-color color-<%=item%>" style="background:#<%=item%>" idx="<%=idx++%>">' +
                         '<em><span style="background:#<%=item%>;" unselectable="on">&#160;</span></em>' +
                         '</a>' +
                     '<% } else if (me.isTransparent(item)) { %>' +
-                        '<a class="color-<%=item%>" data-toggle="tooltip" idx="<%=idx++%>">' +
+                        '<a class="color-<%=item%>" idx="<%=idx++%>">' +
                         '<em><span unselectable="on">&#160;</span></em>' +
                         '</a>' +
                     '<% } else if (me.isEffect(item)) { %>' +
                         '<% if (idx>0 && me.columns>0 && idx%me.columns===0) { %> ' +
-                        '<div class="color-divider"></div>' +
+                        '<div style="width:100%;height:0;float:left;"></div>' +
                         '<% } %>' +
-                        '<a effectid="<%=item.effectId%>" effectvalue="<%=item.effectValue%>" data-toggle="tooltip" class="palette-color-effect color-<%=item.color%>" style="background:#<%=item.color%>" idx="<%=idx++%>">' +
+                        '<a effectid="<%=item.effectId%>" effectvalue="<%=item.effectValue%>" class="palette-color-effect color-<%=item.color%>" style="background:#<%=item.color%>" idx="<%=idx++%>">' +
                         '<em><span style="background:#<%=item.color%>;" unselectable="on">&#160;</span></em>' +
                         '</a>' +
                     '<% } else if (me.isCaption(item)) { %>' +
-                    '<div class="palette-color-caption"><%=item%></div>' +
+                    '<div class="palette-color-caption" style="width:100%;float:left;font-size: 11px;"><%=item%></div>' +
                     '<% } %>' +
                 '<% }); %>' +
                 '</div>' +
                 '<% if (me.options.dynamiccolors!==undefined) { %>' +
-                '<div class="palette-color-dynamiccolors">' +
-                    '<div class="palette-color-spacer"></div>' +
-                    '<div class="palette-color-caption"><%=me.textRecentColors%></div>' +
+                '<div class="palette-color-dynamiccolors" style="padding: 4px 0 0 12px">' +
+                    '<div class="palette-color-spacer" style="width:100%;height:8px;float:left;"></div>' +
+                    '<div class="palette-color-caption" style="width:100%;float:left;font-size: 11px;"><%=me.textRecentColors%></div>' +
                     '<% for (var i=0; i<me.options.dynamiccolors; i++) { %>' +
-                        '<a class="color-dynamic-<%=i%> dynamic-empty-color <%= me.emptyColorsClass %>" data-toggle="tooltip" color="" idx="<%=idx++%>">' +
+                        '<a class="color-dynamic-<%=i%> dynamic-empty-color <%= me.emptyColorsClass %>" color="" idx="<%=idx++%>">' +
                         '<em><span unselectable="on">&#160;</span></em></a>' +
                     '<% } %>' +
                 '<% } %>' +
@@ -117,7 +116,6 @@ define([
             this.outerMenu = me.options.outerMenu;
             this.lastSelectedIdx = -1;
             this.emptyColorsClass = me.options.hideEmptyColors ? 'hidden' : '';
-            this.colorHints = me.options.colorHints;
 
             me.colorItems = [];
             if (me.options.keyMoveDirection=='vertical')
@@ -157,17 +155,6 @@ define([
                 me.colorItems.push({el: item, index: num});
             });
             this.attachKeyEvents();
-
-            var modalParents = this.$el.closest('.asc-window');
-            if (modalParents.length > 0) {
-                this.tipZIndex = parseInt(modalParents.css('z-index')) + 10;
-            }
-            if (this.colorHints) {
-                this.options.transparent && this.createTip(this.$el.find('a.color-transparent'), this.textTransparent);
-                !this.options.themecolors && !this.options.effects && this.updateHints(typeof this.colorHints==='object' ? this.colorHints : undefined);
-                this.colorHints = !!this.colorHints;
-            }
-
             return this;
         },
 
@@ -205,7 +192,7 @@ define([
                     this.lastSelectedIdx = -1;
                 }
 
-                var colors = Common.localStorage.getItem('asc.'+Common.localStorage.getId()+'.colors.custom' + this.options.storageSuffix);
+                var colors = Common.localStorage.getItem('asc.'+Common.localStorage.getId()+'.colors.custom');
                 colors = colors ? colors.split(',') : [];
 
                 var i = -1, colorEl, c = colors.length < this.options.dynamiccolors ? colors.length : this.options.dynamiccolors;
@@ -223,7 +210,6 @@ define([
                         this.lastSelectedIdx = parseInt(colorEl.attr('idx'));
                         color = undefined; //select only first found color
                     }
-                    this.colorHints && this.createTip(colorEl, Common.Utils.ThemeColor.getTranslation(Common.Utils.ThemeColor.getRgbColor(colors[i]).asc_getName()));
                 }
                 while (i < this.options.dynamiccolors) {
                     colorEl = el.find('.color-dynamic-'+ i);
@@ -304,38 +290,33 @@ define([
             var el = this.$el || $(this.el);
             color = /#?([a-fA-F0-9]{6})/.exec(color);
             if (color) {
-                var isNew = this.saveCustomColor(color[1]);
+                this.saveCustomColor(color[1]);
                 this.clearSelection(true);
+
                 var child = el.find('.dynamic-empty-color');
                 if (child.length==0) {
                     this.updateCustomColors();
                     child = el.find('.color-dynamic-' + (this.options.dynamiccolors - 1));
                 } else {
-                    if (isNew && this.options.hideEmptyColors && this._layoutParams) // recalc indexed
+                    if (this.options.hideEmptyColors && this._layoutParams) // recalc indexed
                         this._layoutParams = undefined;
                 }
 
-                if (isNew) {
-                    child.first().removeClass('dynamic-empty-color').removeClass(this.emptyColorsClass).addClass(this.selectedCls).attr('color', color[1]);
-                    child.first().find('span').css({
-                        'background-color': '#' + color[1]
-                    });
-                }
+                child.first().removeClass('dynamic-empty-color').removeClass(this.emptyColorsClass).addClass(this.selectedCls).attr('color', color[1]);
+                child.first().find('span').css({
+                    'background-color': '#'+color[1]
+                });
                 el.find('.palette-color-dynamiccolors').removeClass(this.emptyColorsClass);
                 this.select(color[1], true);
             }
         },
 
         saveCustomColor: function(color) {
-            var key_name = 'asc.'+Common.localStorage.getId()+'.colors.custom' + this.options.storageSuffix;
+            var key_name = 'asc.'+Common.localStorage.getId()+'.colors.custom';
             var colors = Common.localStorage.getItem(key_name);
             colors = colors ? colors.split(',') : [];
-            var index = _.indexOf(colors, color.toUpperCase());
-            if (index < 0) {
-                if (colors.push(color) > this.options.dynamiccolors) colors.shift();
-                Common.localStorage.setItem(key_name, colors.join().toUpperCase());
-            }
-            return index < 0;
+            if (colors.push(color) > this.options.dynamiccolors) colors.shift();
+            Common.localStorage.setItem(key_name, colors.join().toUpperCase());
         },
 
         addNewColor: function(defcolor) {
@@ -349,7 +330,6 @@ define([
                     me.setCustomColor(win.getColor());
                     me.fireEvent('select', me, win.getColor());
                 }
-                me.fireEvent('close:extended', me, mr==1);
             });
             me._isdlgopen = true;
             win.setColor((me.value!==undefined && me.value!==false) ? me.value : ((defcolor!==undefined) ? defcolor : '000000'));
@@ -466,12 +446,11 @@ define([
                     aEl = $(me.aColorElements[aColorIdx]);
                     aEl.removeClass('color-'+me.colors[i]);
 
-                    me.colors[i] = standartcolors[aColorIdx].color = standartcolors[aColorIdx].color.toUpperCase();
+                    me.colors[i] = standartcolors[aColorIdx].toUpperCase();
 
                     aEl.addClass('color-'+me.colors[i]);
                     aEl.css({background: "#"+me.colors[i]});
                     aEl.find('span').first().css({background: "#"+me.colors[i]});
-                    me.colorHints && me.createTip(aEl, standartcolors[aColorIdx].tip);
                     aColorIdx++;
                 } else if ( typeof(me.colors[i]) == 'object' && me.colors[i].effectId !== undefined) {
                     if (aEffectIdx>=effectcolors.length)
@@ -494,7 +473,7 @@ define([
                         aEl.attr('effectvalue', '' + effectcolors[aEffectIdx].effectValue);
 
                     me.colors[i] = effectcolors[aEffectIdx];
-                    me.colorHints && me.createTip(aEl, effectcolors[aEffectIdx].tip);
+
                     aEffectIdx++;
                 }
             }
@@ -508,22 +487,6 @@ define([
                 }
             }
             this.options.updateColorsArr = undefined;
-        },
-
-        createTip: function(view, name) {
-            var tipZIndex = this.tipZIndex;
-            (view.attr('color-name')===undefined) && view.one('mouseenter', function(e){ // hide tooltip when mouse is over menu
-                var $target = $(e.currentTarget);
-                $target.tooltip({
-                    title: $target.attr('color-name'),
-                    placement   : 'cursor',
-                    zIndex : tipZIndex
-                });
-                $target.mouseenter();
-            });
-            var tip = view.data('bs.tooltip');
-            tip && tip.updateTitle(name);
-            view.attr('color-name', name || '');
         },
 
         clearSelection: function(suppressEvent) {
@@ -710,23 +673,8 @@ define([
             this.focus(e.keyCode == Common.UI.Keys.DOWN ? 'first' : 'last');
         },
 
-        updateHints: function(values) { // use for hex colors (without effectId)
-            if (!this.colorHints) return;
-
-            var me = this;
-            (me.$el || $(me.el)).find('a.palette-color').each(function(num, item) {
-                if (values && values[num])
-                    me.createTip($(item), values[num]);
-                else {
-                    var color = item.className.match(me.colorRe)[1];
-                    me.createTip($(item), Common.Utils.ThemeColor.getTranslation(Common.Utils.ThemeColor.getRgbColor(color).asc_getName()));
-                }
-            });
-        },
-
         textThemeColors         : 'Theme Colors',
         textStandartColors      : 'Standard Colors',
-        textRecentColors        : 'Recent Colors',
-        textTransparent         : 'Transparent'
+        textRecentColors        : 'Recent Colors'
     }, Common.UI.ThemeColorPalette || {}));
 });

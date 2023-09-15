@@ -56,13 +56,9 @@ const ToolbarController = inject('storeAppOptions', 'users', 'storeFocusObjects'
             setShowBack(true);
         }
     };
-
-    const onRequestClose = () => {
+    const onBack = () => {
         const api = Common.EditorApi.get();
-
         if (api.isDocumentModified()) {
-            api.asc_stopSaving();
-
             f7.dialog.create({
                 title   : _t.dlgLeaveTitleText,
                 text    : _t.dlgLeaveMsgText,
@@ -70,38 +66,33 @@ const ToolbarController = inject('storeAppOptions', 'users', 'storeFocusObjects'
                 buttons : [
                     {
                         text: _t.leaveButtonText,
-                        onClick: () => {
-                            api.asc_undoAllChanges();
-                            api.asc_continueSaving();
-                            Common.Gateway.requestClose();
+                        onClick: function() {
+                            goBack(true);
                         }
                     },
                     {
                         text: _t.stayButtonText,
-                        bold: true,
-                        onClick: () => {
-                            api.asc_continueSaving();
-                        }
+                        bold: true
                     }
                 ]
             }).open();
         } else {
-            Common.Gateway.requestClose();
+            goBack(true);
         }
     };
-
     const goBack = (current) => {
-        if (appOptions.customization.goback.requestClose && appOptions.canRequestClose) {
-            onRequestClose();
-        } else {
-            const href = appOptions.customization.goback.url;
-
-            if (!current && appOptions.customization.goback.blank !== false) {
-                window.open(href, "_blank");
+        //if ( !Common.Controllers.Desktop.process('goback') ) {
+            if (appOptions.customization.goback.requestClose && appOptions.canRequestClose) {
+                Common.Gateway.requestClose();
             } else {
-                parent.location.href = href;
+                const href = appOptions.customization.goback.url;
+                if (!current && appOptions.customization.goback.blank !== false) {
+                    window.open(href, "_blank");
+                } else {
+                    parent.location.href = href;
+                }
             }
-        }
+        //}
     }
 
     const onUndo = () => {
@@ -110,7 +101,6 @@ const ToolbarController = inject('storeAppOptions', 'users', 'storeFocusObjects'
             api.Undo();
         }
     };
-
     const onRedo = () => {
         const api = Common.EditorApi.get();
         if (api) {
@@ -140,6 +130,7 @@ const ToolbarController = inject('storeAppOptions', 'users', 'storeFocusObjects'
                      isEdit={appOptions.isEdit}
                      docTitle={docTitle}
                      isShowBack={isShowBack}
+                     onBack={onBack}
                      isCanUndo={isCanUndo}
                      isCanRedo={isCanRedo}
                      onUndo={onUndo}

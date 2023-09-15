@@ -8,8 +8,6 @@
     height: 35px;
     z-index: 10;
     opacity: 0.2;
-    position: absolute;
-    bottom: 0;
 
     &:hover {
         opacity: 1 !important;
@@ -21,8 +19,7 @@
     }
 
     #preview-label-slides {
-        //font: bold 11px Helvetica, Arial, Verdana, sans-serif;
-        .font-size-normal();
+        font: bold 11px Helvetica, Arial, Verdana, sans-serif;
         color: @text-normal-ie;
         color: @text-normal;
         text-shadow: none;
@@ -32,21 +29,9 @@
 
     #btn-preview-prev {
         margin-left: 10px;
-        .rtl & {
-            margin-left: 0;
-        }
-    }
-    #btn-preview-next {
-        .rtl & {
-            margin-right: 10px;
-        }
     }
     #btn-preview-close {
         margin-right: 10px;
-        .rtl & {
-            margin-right: 0;
-            margin-left: 10px;
-        }
     }
 
     .separator {
@@ -61,22 +46,10 @@
         margin-left: 80px;
         margin-bottom: 2px;
         min-width: 130px;
-        .rtl & {
-            margin-left: 0;
-            margin-right: 80px;
-        }
 
         > label {
-            display: inline-block;
-            line-height:22px;
-            margin-right: 10px;
-            float: left;
-
-            .rtl & {
-                margin-right: 0;
-                margin-left: 10px;
-                float: right;
-            }
+              display: inline-block;
+              margin-right: 10px;
           }
 
         > input[type=text] {

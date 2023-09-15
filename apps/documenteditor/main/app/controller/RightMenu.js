@@ -1,5 +1,6 @@
 /*
- * (c) Copyright Ascensio System SIA 2010-2023
+ *
+ * (c) Copyright Ascensio System SIA 2010-2019
  *
  * This program is a free software product. You can redistribute it and/or
  * modify it under the terms of the GNU Affero General Public License (AGPL)
@@ -12,7 +13,7 @@
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR  PURPOSE. For
  * details, see the GNU AGPL at: http://www.gnu.org/licenses/agpl-3.0.html
  *
- * You can contact Ascensio System SIA at 20A-6 Ernesta Birznieka-Upish
+ * You can contact Ascensio System SIA at 20A-12 Ernesta Birznieka-Upisha
  * street, Riga, Latvia, EU, LV-1050.
  *
  * The  interactive user interfaces in modified source and object code versions
@@ -28,7 +29,7 @@
  * Creative Commons Attribution-ShareAlike 4.0 International. See the License
  * terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
  *
- */
+*/
 /**
  *  RightMenu.js
  *
@@ -166,12 +167,10 @@ define([
             this._settings[Common.Utils.documentSettingsType.Signature].locked = false;
 
             var isChart = false,
-                isShape = false,
                 isSmartArtInternal = false,
                 isProtected = this._state.docProtection.isReadOnly || this._state.docProtection.isFormsOnly || this._state.docProtection.isCommentsOnly;
 
             var control_props = this.api.asc_IsContentControl() ? this.api.asc_GetContentControlProperties() : null,
-                is_form = control_props && control_props.get_FormPr(),
                 control_lock = false;
             for (i=0; i<SelectedObjects.length; i++)
             {
@@ -193,7 +192,6 @@ define([
                         isChart = true;
                         settingsType = Common.Utils.documentSettingsType.Chart;
                     } else if (value.get_ShapeProperties() !== null) {
-                        isShape = true;
                         isChart = value.get_ShapeProperties().get_FromChart();
                         isSmartArtInternal = value.get_ShapeProperties().get_FromSmartArtInternal();
                         settingsType = Common.Utils.documentSettingsType.Shape;
@@ -204,7 +202,7 @@ define([
                         }
                     }
                     control_lock = control_lock || value.get_Locked();
-                } else if (settingsType == Common.Utils.documentSettingsType.Paragraph && !(is_form && is_form.get_Fixed())) {
+                } else if (settingsType == Common.Utils.documentSettingsType.Paragraph) {
                     this._settings[settingsType].panel.isChart = isChart;
                     this._settings[settingsType].panel.isSmartArtInternal = isSmartArtInternal;
                     can_add_table = value.get_CanAddTable();
@@ -219,11 +217,7 @@ define([
                     this._settings[Common.Utils.documentSettingsType.Signature].locked = value.get_Locked();
             }
 
-            if(is_form && is_form.get_Fixed()) {
-                this._settings[Common.Utils.documentSettingsType.Paragraph].hidden = 1;
-            }
-
-            if (is_form && this.rightmenu.formSettings) {
+            if (control_props && control_props.get_FormPr() && this.rightmenu.formSettings) {
                 var spectype = control_props.get_SpecificType();
                 if (spectype==Asc.c_oAscContentControlSpecificType.CheckBox || spectype==Asc.c_oAscContentControlSpecificType.Picture || spectype==Asc.c_oAscContentControlSpecificType.Complex ||
                     spectype==Asc.c_oAscContentControlSpecificType.ComboBox || spectype==Asc.c_oAscContentControlSpecificType.DropDownList || spectype==Asc.c_oAscContentControlSpecificType.None ||
@@ -232,7 +226,7 @@ define([
                     this._settings[settingsType].props = control_props;
                     this._settings[settingsType].locked = control_lock || isProtected;
                     this._settings[settingsType].hidden = 0;
-                    if (is_form.get_Fixed())
+                    if (control_props.get_FormPr().get_Fixed())
                         this._settings[Common.Utils.documentSettingsType.TextArt].hidden = 1;
                 }
             }
@@ -309,21 +303,10 @@ define([
                 
                 if (active !== undefined) {
                     this.rightmenu.SetActivePane(active, open);
-                    if (active === Common.Utils.documentSettingsType.Form)
-                        this._settings[active].panel.ChangeSettings.call(this._settings[active].panel, this._settings[active].props, isShape);
-                    else if (active!=Common.Utils.documentSettingsType.MailMerge && active!=Common.Utils.documentSettingsType.Signature)
+                    if (active!=Common.Utils.documentSettingsType.MailMerge && active!=Common.Utils.documentSettingsType.Signature)
                         this._settings[active].panel.ChangeSettings.call(this._settings[active].panel, this._settings[active].props);
                     else
                         this._settings[active].panel.ChangeSettings.call(this._settings[active].panel);
-                } else if (activePane) { // lock active pane if no selected objects (ex. drawing)
-                    for (var i=0; i<this._settings.length; i++) {
-                        if (this._settings[i] && this._settings[i].panelId === activePane) {
-                            this._settings[i].locked = true;
-                            this._settings[i].panel.setLocked(true);
-                            this._settings[i].panel.disableControls(true);
-                            break;
-                        }
-                    }
                 }
             }
 

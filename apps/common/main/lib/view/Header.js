@@ -1,5 +1,6 @@
 /*
- * (c) Copyright Ascensio System SIA 2010-2023
+ *
+ * (c) Copyright Ascensio System SIA 2010-2019
  *
  * This program is a free software product. You can redistribute it and/or
  * modify it under the terms of the GNU Affero General Public License (AGPL)
@@ -12,7 +13,7 @@
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR  PURPOSE. For
  * details, see the GNU AGPL at: http://www.gnu.org/licenses/agpl-3.0.html
  *
- * You can contact Ascensio System SIA at 20A-6 Ernesta Birznieka-Upish
+ * You can contact Ascensio System SIA at 20A-12 Ernesta Birznieka-Upisha
  * street, Riga, Latvia, EU, LV-1050.
  *
  * The  interactive user interfaces in modified source and object code versions
@@ -28,7 +29,7 @@
  * Creative Commons Attribution-ShareAlike 4.0 International. See the License
  * terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
  *
- */
+*/
 /**
  *  Header.js
  *
@@ -151,7 +152,7 @@ define([
         function onResetUsers(collection, opts) {
             var usercount = collection.getVisibleEditingCount();
             if ( $userList ) {
-                if (appConfig && (usercount > 1 && (appConfig.isEdit || appConfig.isRestrictedEdit) || usercount >0 && appConfig.canLiveView)) {
+                if (usercount > 1 && appConfig && (appConfig.isEdit || appConfig.isRestrictedEdit)) {
                     $userList.html(templateUserList({
                         users: collection.chain().filter(function(item){return item.get('online') && !item.get('view') && !item.get('hidden')}).groupBy(function(item) {return item.get('idOriginal');}).value(),
                         usertpl: _.template(templateUserItem),
@@ -181,7 +182,8 @@ define([
 
         function applyUsers(count, originalCount) {
             if (!$btnUsers) return;
-            var has_edit_users = appConfig && (count > 1 && (appConfig.isEdit || appConfig.isRestrictedEdit) || count > 0 && appConfig.canLiveView); // has other user(s) who edit document
+
+            var has_edit_users = count > 1 && appConfig && (appConfig.isEdit || appConfig.isRestrictedEdit); // has other user(s) who edit document
             if ( has_edit_users ) {
                 $panelUsers['show']();
                 $btnUsers.find('.caption').html(originalCount);
@@ -273,7 +275,6 @@ define([
             me.btnFavorite.on('click', function (e) {
                 // wait for setFavorite method
                 // me.options.favorite = !me.options.favorite;
-                // me.btnFavorite.changeIcon(me.options.favorite ? {next: 'btn-in-favorite', curr: 'btn-favorite'} : {next: 'btn-favorite', curr: 'btn-in-favorite'});
                 // me.btnFavorite.changeIcon(me.options.favorite ? {next: 'btn-in-favorite'} : {curr: 'btn-in-favorite'});
                 // me.btnFavorite.updateHint(!me.options.favorite ? me.textAddFavorite : me.textRemoveFavorite);
                 Common.NotificationCenter.trigger('markfavorite', !me.options.favorite);
@@ -315,7 +316,7 @@ define([
                     html: true
                 });
                 $btnUsers.on('click', onUsersClick.bind(me));
-                $panelUsers[(appConfig && (editingUsers > 1 && (appConfig.isEdit || appConfig.isRestrictedEdit) || editingUsers > 0 && appConfig.canLiveView)) ? 'show' : 'hide']();
+                $panelUsers[(editingUsers > 1 && appConfig && (appConfig.isEdit || appConfig.isRestrictedEdit)) ? 'show' : 'hide']();
                 updateDocNamePosition(appConfig);
             }
 
@@ -467,7 +468,7 @@ define([
                 this.isModified = false;
 
                 me.btnGoBack = new Common.UI.Button({
-                    id: 'btn-go-back',
+                    id: 'btn-goback',
                     cls: 'btn-header',
                     iconCls: 'toolbar__icon icon--inverse btn-goback',
                     dataHint: '0',
@@ -492,7 +493,7 @@ define([
                 });
 
                 me.btnFavorite = new Common.UI.Button({
-                    id: 'id-btn-favorite',
+                    id: 'btn-favorite',
                     cls: 'btn-header',
                     iconCls: 'toolbar__icon icon--inverse btn-favorite',
                     dataHint: '0',
@@ -568,7 +569,7 @@ define([
 
                     if ( this.options.favorite !== undefined && this.options.favorite!==null) {
                         me.btnFavorite.render($html.find('#slot-btn-favorite'));
-                        me.btnFavorite.changeIcon(!!me.options.favorite ? {next: 'btn-in-favorite', curr: 'btn-favorite'} : {next: 'btn-favorite', curr: 'btn-in-favorite'});
+                        me.btnFavorite.changeIcon(!!me.options.favorite ? {next: 'btn-in-favorite'} : {curr: 'btn-in-favorite'});
                         me.btnFavorite.updateHint(!me.options.favorite ? me.textAddFavorite : me.textRemoveFavorite);
                     } else {
                         $html.find('#slot-btn-favorite').hide();
@@ -745,7 +746,7 @@ define([
             setFavorite: function (value) {
                 this.options.favorite = value;
                 this.btnFavorite[value!==undefined && value!==null ? 'show' : 'hide']();
-                this.btnFavorite.changeIcon(!!value ? {next: 'btn-in-favorite', curr: 'btn-favorite'} : {next: 'btn-favorite', curr: 'btn-in-favorite'});
+                this.btnFavorite.changeIcon(!!value ? {next: 'btn-in-favorite'} : {curr: 'btn-in-favorite'});
                 this.btnFavorite.updateHint(!value ? this.textAddFavorite : this.textRemoveFavorite);
                 updateDocNamePosition(appConfig);
                 return this;
@@ -825,11 +826,7 @@ define([
                         this._testCanvas.font = font;
                     }
                 }
-                if (this._testCanvas) {
-                    var mt = this._testCanvas.measureText(text);
-                    return (mt.actualBoundingBoxLeft!==undefined) ? Math.ceil(Math.abs(mt.actualBoundingBoxLeft) + Math.abs(mt.actualBoundingBoxRight)) + 1 : (mt.width ? Math.ceil(mt.width)+2 : 0);
-                }
-                return -1;
+                return this._testCanvas ? this._testCanvas.measureText(text).width : -1;
             },
 
             setUserName: function(name) {

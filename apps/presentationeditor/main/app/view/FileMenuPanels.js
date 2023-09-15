@@ -1,5 +1,6 @@
 /*
- * (c) Copyright Ascensio System SIA 2010-2023
+ *
+ * (c) Copyright Ascensio System SIA 2010-2019
  *
  * This program is a free software product. You can redistribute it and/or
  * modify it under the terms of the GNU Affero General Public License (AGPL)
@@ -12,7 +13,7 @@
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR  PURPOSE. For
  * details, see the GNU AGPL at: http://www.gnu.org/licenses/agpl-3.0.html
  *
- * You can contact Ascensio System SIA at 20A-6 Ernesta Birznieka-Upish
+ * You can contact Ascensio System SIA at 20A-12 Ernesta Birznieka-Upisha
  * street, Riga, Latvia, EU, LV-1050.
  *
  * The  interactive user interfaces in modified source and object code versions
@@ -28,7 +29,7 @@
  * Creative Commons Attribution-ShareAlike 4.0 International. See the License
  * terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
  *
- */
+*/
 /**
  *    FileMenuPanels.js
  *
@@ -54,36 +55,35 @@ define([
 
         formats: [[
             {name: 'PPTX',  imgCls: 'pptx',  type: Asc.c_oAscFileType.PPTX},
-            {name: 'PPSX',  imgCls: 'ppsx',  type: Asc.c_oAscFileType.PPSX},
             {name: 'PDF',   imgCls: 'pdf',   type: Asc.c_oAscFileType.PDF},
             {name: 'ODP',   imgCls: 'odp',   type: Asc.c_oAscFileType.ODP}
         ],[
             {name: 'POTX',  imgCls: 'potx',   type: Asc.c_oAscFileType.POTX},
-            {name: 'PPTM',  imgCls: 'pptm',  type: Asc.c_oAscFileType.PPTM},
             {name: 'PDFA',  imgCls: 'pdfa',  type: Asc.c_oAscFileType.PDFA},
             {name: 'OTP',   imgCls: 'otp',   type: Asc.c_oAscFileType.OTP}
         ], [
-            {name: 'JPG',   imgCls: 'jpg',  type: Asc.c_oAscFileType.JPG},
-            {name: 'PNG',   imgCls: 'png',  type: Asc.c_oAscFileType.PNG}
+            {name: 'PPSX',  imgCls: 'ppsx',  type: Asc.c_oAscFileType.PPSX},
+            {name: 'PNG',   imgCls: 'png',  type: Asc.c_oAscFileType.PNG},
+            {name: 'JPG',   imgCls: 'jpg',  type: Asc.c_oAscFileType.JPG}
+        ], [
+            {name: 'PPTM',  imgCls: 'pptm',  type: Asc.c_oAscFileType.PPTM}
         ]],
 
 
         template: _.template([
-            '<div class="content-container">',
-                '<div class="header"><%= header %></div>',
-                '<div class="format-items">',
-                    '<% _.each(rows, function(row) { %>',
+            '<table><tbody>',
+                '<% _.each(rows, function(row) { %>',
+                    '<tr>',
                         '<% _.each(row, function(item) { %>',
                             '<% if (item.type!==Asc.c_oAscFileType.PPTM || fileType=="pptm") { %>',
-                                '<div class="format-item"><div class="btn-doc-format" format="<%= item.type %>" data-hint="2" data-hint-direction="left-top" data-hint-offset="4, 4">',
-                                    '<div class ="svg-format-<%= item.imgCls %>"></div>',
-                                '</div></div>',
+                            '<td><div><div class="btn-doc-format" format="<%= item.type %>" data-hint="2" data-hint-direction="left-top" data-hint-offset="4, 4">',
+                                '<div class="svg-format-<%= item.imgCls %>"></div>',
+                            '</div></div></td>',
                             '<% } %>',
                         '<% }) %>',
-                        '<div class="divider"></div>',
-                    '<% }) %>',
-                '</div>',
-            '</div>'
+                    '</tr>',
+                '<% }) %>',
+            '</tbody></table>'
         ].join('')),
 
         initialize: function(options) {
@@ -91,22 +91,10 @@ define([
 
             this.menu = options.menu;
             this.fileType = options.fileType;
-
-            Common.NotificationCenter.on({
-                'window:resize': _.bind(function() {
-                    var divided = Common.Utils.innerWidth() >= this.maxWidth;
-                    if (this.isDivided !== divided) {
-                        this.$el.find('.divider').css('width', divided ? '100%' : '0');
-                        this.isDivided = divided;
-                    }
-                }, this)
-            });
         },
 
         render: function() {
-            this.$el.html(this.template({rows:this.formats,
-                fileType: (this.fileType || 'pptx').toLowerCase(),
-                header: /*this.textDownloadAs*/ Common.Locale.get('btnDownloadCaption', {name:'PE.Views.FileMenu', default:this.textDownloadAs})}));
+            this.$el.html(this.template({rows:this.formats, fileType: (this.fileType || 'pptx').toLowerCase()}));
             $('.btn-doc-format',this.el).on('click', _.bind(this.onFormatClick,this));
 
             if (_.isUndefined(this.scroller)) {
@@ -115,21 +103,6 @@ define([
                     suppressScrollX: true,
                     alwaysVisibleY: true
                 });
-            }
-
-            var itemWidth = 70 + 24, // width + margin
-                maxCount = 0;
-            this.formats.forEach(_.bind(function (item, index) {
-                var count = item.length;
-                if (count > maxCount) {
-                    maxCount = count;
-                }
-            }, this));
-            this.maxWidth = $('#file-menu-panel .panel-menu').outerWidth() + 20 + 10 + itemWidth * maxCount; // menu + left padding + margin
-
-            if (Common.Utils.innerWidth() >= this.maxWidth) {
-                this.$el.find('.divider').css('width', '100%');
-                this.isDivided = true;
             }
 
             return this;
@@ -145,9 +118,7 @@ define([
             if (!_.isUndefined(type) && this.menu) {
                 this.menu.fireEvent('saveas:format', [this.menu, parseInt(type.value)]);
             }
-        },
-
-        textDownloadAs: "Download as"
+        }
     });
 
     PE.Views.FileMenuPanels.ViewSaveCopy = Common.UI.BaseView.extend({
@@ -156,35 +127,34 @@ define([
 
         formats: [[
             {name: 'PPTX',  imgCls: 'pptx',  type: Asc.c_oAscFileType.PPTX, ext: '.pptx'},
-            {name: 'PPSX',  imgCls: 'ppsx',  type: Asc.c_oAscFileType.PPSX, ext: '.ppsx'},
-            {name: 'PDF',   imgCls: 'pdf',   type: Asc.c_oAscFileType.PDF, ext: '.pdf'},
-            {name: 'ODP',   imgCls: 'odp',   type: Asc.c_oAscFileType.ODP, ext: '.odp'}
+            {name: 'PDF',   imgCls: 'pdf',   type: Asc.c_oAscFileType.PDF,  ext: '.pdf'},
+            {name: 'ODP',   imgCls: 'odp',   type: Asc.c_oAscFileType.ODP,  ext: '.odp'}
         ],[
-            {name: 'POTX',  imgCls: 'potx',   type: Asc.c_oAscFileType.POTX, ext: '.potx'},
-            {name: 'PPTM',  imgCls: 'pptm',  type: Asc.c_oAscFileType.PPTM, ext: '.pptm'},
+            {name: 'POTX',  imgCls: 'potx',  type: Asc.c_oAscFileType.POTX, ext: '.potx'},
             {name: 'PDFA',  imgCls: 'pdfa',  type: Asc.c_oAscFileType.PDFA, ext: '.pdf'},
-            {name: 'OTP',   imgCls: 'otp',   type: Asc.c_oAscFileType.OTP, ext: '.otp'}
+            {name: 'OTP',   imgCls: 'otp',   type: Asc.c_oAscFileType.OTP,  ext: '.otp'}
         ], [
-            {name: 'JPG',   imgCls: 'jpg',  type: Asc.c_oAscFileType.JPG, ext: '.zip'},
-            {name: 'PNG',   imgCls: 'png',  type: Asc.c_oAscFileType.PNG, ext: '.zip'}
+            {name: 'PPSX',  imgCls: 'ppsx',  type: Asc.c_oAscFileType.PPSX, ext: '.ppsx'},
+            {name: 'PNG',   imgCls: 'png',   type: Asc.c_oAscFileType.PNG, ext: '.zip'},
+            {name: 'JPG',   imgCls: 'jpg',   type: Asc.c_oAscFileType.JPG, ext: '.zip'}
+        ], [
+            {name: 'PPTM',  imgCls: 'pptm',  type: Asc.c_oAscFileType.PPTM, ext: '.pptm'}
         ]],
 
         template: _.template([
-            '<div class="content-container">',
-                '<div class="header"><%= header %></div>',
-                '<div class="format-items">',
-                    '<% _.each(rows, function(row) { %>',
+            '<table><tbody>',
+                '<% _.each(rows, function(row) { %>',
+                    '<tr>',
                         '<% _.each(row, function(item) { %>',
                             '<% if (item.type!==Asc.c_oAscFileType.PPTM || fileType=="pptm") { %>',
-                                '<div class="format-item"><div class="btn-doc-format" format="<%= item.type %>" format-ext="<%= item.ext %>" data-hint="2" data-hint-direction="left-top" data-hint-offset="4, 4">',
-                                    '<div class ="svg-format-<%= item.imgCls %>"></div>',
-                                '</div></div>',
+                            '<td><div><div class="btn-doc-format" format="<%= item.type %>", format-ext="<%= item.ext %>" data-hint="2" data-hint-direction="left-top" data-hint-offset="4, 4">',
+                                '<div class="svg-format-<%= item.imgCls %>"></div>',
+                            '</div></div></td>',
                             '<% } %>',
                         '<% }) %>',
-                        '<div class="divider"></div>',
-                    '<% }) %>',
-                '</div>',
-            '</div>'
+                    '</tr>',
+                '<% }) %>',
+            '</tbody></table>'
         ].join('')),
 
         initialize: function(options) {
@@ -192,22 +162,10 @@ define([
 
             this.menu = options.menu;
             this.fileType = options.fileType;
-
-            Common.NotificationCenter.on({
-                'window:resize': _.bind(function() {
-                    var divided = Common.Utils.innerWidth() >= this.maxWidth;
-                    if (this.isDivided !== divided) {
-                        this.$el.find('.divider').css('width', divided ? '100%' : '0');
-                        this.isDivided = divided;
-                    }
-                }, this)
-            });
         },
 
         render: function() {
-            this.$el.html(this.template({rows:this.formats,
-                fileType: (this.fileType || 'pptx').toLowerCase(),
-                header: /*this.textSaveCopyAs*/ Common.Locale.get('btnSaveCopyAsCaption', {name:'PE.Views.FileMenu', default:this.textSaveCopyAs})}));
+            this.$el.html(this.template({rows:this.formats, fileType: (this.fileType || 'pptx').toLowerCase()}));
             $('.btn-doc-format',this.el).on('click', _.bind(this.onFormatClick,this));
 
             if (_.isUndefined(this.scroller)) {
@@ -216,21 +174,6 @@ define([
                     suppressScrollX: true,
                     alwaysVisibleY: true
                 });
-            }
-
-            var itemWidth = 70 + 24, // width + margin
-                maxCount = 0;
-            this.formats.forEach(_.bind(function (item, index) {
-                var count = item.length;
-                if (count > maxCount) {
-                    maxCount = count;
-                }
-            }, this));
-            this.maxWidth = $('#file-menu-panel .panel-menu').outerWidth() + 20 + 10 + itemWidth * maxCount; // menu + left padding + margin
-
-            if (Common.Utils.innerWidth() >= this.maxWidth) {
-                this.$el.find('.divider').css('width', '100%');
-                this.isDivided = true;
             }
 
             return this;
@@ -247,9 +190,7 @@ define([
             if (!_.isUndefined(type) && !_.isUndefined(ext) && this.menu) {
                 this.menu.fireEvent('savecopy:format', [this.menu, parseInt(type.value), ext.value]);
             }
-        },
-
-        textSaveCopyAs: "Save Copy as"
+        }
     });
 
     PE.Views.FileMenuPanels.Settings = Common.UI.BaseView.extend(_.extend({
@@ -258,8 +199,7 @@ define([
 
         template: _.template([
         '<div class="flex-settings">',
-            '<div class="header"><%= scope.txtAdvancedSettings %></div>',
-            '<table><tbody>',
+            '<table style="margin: 10px 14px auto;"><tbody>',
                 '<tr class="editsave">',
                     '<td colspan="2" class="group-name top"><label><%= scope.txtEditingSaving %></label></td>',
                 '</tr>',
@@ -325,9 +265,6 @@ define([
                 '</tr>',
                 '<tr>',
                     '<td colspan="2"><div id="fms-chb-use-alt-key"></div></td>',
-                '</tr>',
-                '<tr class="ui-rtl">',
-                    '<td colspan="2"><div id="fms-chb-rtl-ui"></div></td>',
                 '</tr>',
                 '<tr class="quick-print">',
                     '<td colspan="2"><div style="display: flex;"><div id="fms-chb-quick-print"></div>',
@@ -598,14 +535,6 @@ define([
                 dataHintOffset: 'big'
             });
 
-            this.chRTL = new Common.UI.CheckBox({
-                el: $markup.findById('#fms-chb-rtl-ui'),
-                labelText: this.strRTLSupport,
-                dataHint: '2',
-                dataHintDirection: 'left',
-                dataHintOffset: 'small'
-            });
-
             $markup.find('.btn.primary').each(function(index, el){
                 (new Common.UI.Button({
                     el: $(el)
@@ -657,7 +586,7 @@ define([
         updateScroller: function() {
             if (this.scroller) {
                 Common.UI.Menu.Manager.hideAll();
-                var scrolled = this.$el.height()< this.pnlTable.height() + 25 + this.pnlApply.height() + this.$el.find('.header').outerHeight(true);
+                var scrolled = this.$el.height()< this.pnlTable.height() + 25 + this.pnlApply.height();
                 this.pnlApply.toggleClass('hidden', !scrolled);
                 this.trApply.toggleClass('hidden', scrolled);
                 this.pnlSettings.css('overflow', scrolled ? 'hidden' : 'visible');
@@ -685,7 +614,6 @@ define([
             $('tr.macros', this.el)[(mode.customization && mode.customization.macros===false) ? 'hide' : 'show']();
             $('tr.spellcheck', this.el)[mode.isEdit && Common.UI.FeaturesManager.canChange('spellcheck') ? 'show' : 'hide']();
             $('tr.quick-print', this.el)[mode.canQuickPrint && !(mode.customization && mode.customization.compactHeader && mode.isEdit) ? 'show' : 'hide']();
-            $('tr.ui-rtl', this.el)[mode.uiRtl ? 'show' : 'hide']();
 
             if ( !Common.UI.Themes.available() ) {
                 $('tr.themes, tr.themes + tr.divider', this.el).hide();
@@ -747,7 +675,6 @@ define([
             this.lblMacrosDesc.text(item ? item.get('descValue') : this.txtWarnMacrosDesc);
 
             this.chPaste.setValue(Common.Utils.InternalSettings.get("pe-settings-paste-button"));
-            this.chRTL.setValue(Common.localStorage.getBool("ui-rtl"));
             this.chQuickPrint.setValue(Common.Utils.InternalSettings.get("pe-settings-quick-print-button"));
 
             var data = [];
@@ -795,8 +722,6 @@ define([
             Common.Utils.InternalSettings.set("pe-macros-mode", this.cmbMacros.getValue());
 
             Common.localStorage.setItem("pe-settings-paste-button", this.chPaste.isChecked() ? 1 : 0);
-            var isRtlChanged = this.chRTL.$el.is(':visible') && Common.localStorage.getBool("ui-rtl") !== this.chRTL.isChecked();
-            Common.localStorage.setBool("ui-rtl", this.chRTL.isChecked());
             Common.localStorage.setBool("pe-settings-quick-print-button", this.chQuickPrint.isChecked());
 
             Common.localStorage.save();
@@ -806,16 +731,6 @@ define([
 
                 if (this._oldUnits !== this.cmbUnit.getValue())
                     Common.NotificationCenter.trigger('settings:unitschanged', this);
-            }
-
-            if (isRtlChanged) {
-                var config = {
-                    title: this.txtWorkspaceSettingChange,
-                    msg: this.txtRestartEditor,
-                    iconCls: 'warn',
-                    buttons: ['ok']
-                };
-                Common.UI.alert(config);
             }
         },
 
@@ -860,7 +775,6 @@ define([
         textForceSave: 'Save to Server',
         txtSpellCheck: 'Spell Checking',
         txtCacheMode: 'Default cache mode',
-        strRTLSupport: 'RTL interface',
         strMacrosSettings: 'Macros Settings',
         txtWarnMacros: 'Show Notification',
         txtRunMacros: 'Enable All',
@@ -885,11 +799,9 @@ define([
         strIgnoreWordsInUPPERCASE: 'Ignore words in UPPERCASE',
         strIgnoreWordsWithNumbers: 'Ignore words with numbers',
         strShowOthersChanges: 'Show changes from other users',
-        txtAdvancedSettings: 'Advanced Settings',
         txtQuickPrint: 'Show the Quick Print button in the editor header',
-        txtQuickPrintTip: 'The document will be printed on the last selected or default printer',
-        txtWorkspaceSettingChange: 'Workspace setting (RTL interface) change',
-        txtRestartEditor: 'Please restart presentation editor so that your workspace settings can take effect'
+        txtQuickPrintTip: 'The document will be printed on the last selected or default printer'
+
     }, PE.Views.FileMenuPanels.Settings || {}));
 
     PE.Views.FileMenuPanels.RecentFiles = Common.UI.BaseView.extend({
@@ -897,8 +809,7 @@ define([
         menu: undefined,
 
         template: _.template([
-            '<div class="header"><%= scope.txtOpenRecent %></div>',
-            '<div id="id-recent-view"></div>'
+            '<div id="id-recent-view" style="margin: 20px 0;"></div>'
         ].join('')),
 
         initialize: function(options) {
@@ -909,7 +820,7 @@ define([
         },
 
         render: function() {
-            this.$el.html(this.template({scope: this}));
+            this.$el.html(this.template());
 
             this.viewRecentPicker = new Common.UI.DataView({
                 el: $('#id-recent-view'),
@@ -948,9 +859,7 @@ define([
         onRecentFileClick: function(view, itemview, record){
             if ( this.menu )
                 this.menu.fireEvent('recent:open', [this.menu, record.get('url')]);
-        },
-
-        txtOpenRecent: 'Open Recent'
+        }
     });
 
     PE.Views.FileMenuPanels.CreateNew = Common.UI.BaseView.extend(_.extend({
@@ -965,7 +874,7 @@ define([
         },
 
         template: _.template([
-            '<div class="header"><%= scope.txtCreateNew %></div>',
+            '<h3 style="margin-top: 20px;"><%= scope.txtCreateNew %></h3>',
             '<div class="thumb-list">',
                 '<% if (blank) { %> ',
                 '<div class="blank-document">',
@@ -1053,8 +962,7 @@ define([
 
             this.template = _.template([
             '<div class="flex-settings">',
-                '<div class="header">' + this.txtPresentationInfo + '</div>',
-                '<table class="main">',
+                '<table class="main" style="margin: 30px 0 0;">',
                     '<tr>',
                         '<td class="left"><label>' + this.txtPlacement + '</label></td>',
                         '<td class="right"><label id="id-info-placement">-</label></td>',
@@ -1482,8 +1390,7 @@ define([
         txtAddAuthor: 'Add Author',
         txtAddText: 'Add Text',
         txtMinutes: 'min',
-        okButtonText: 'Apply',
-        txtPresentationInfo: 'Presentation Info'
+        okButtonText: 'Apply'
     }, PE.Views.FileMenuPanels.DocumentInfo || {}));
 
     PE.Views.FileMenuPanels.DocumentRights = Common.UI.BaseView.extend(_.extend({
@@ -1495,14 +1402,13 @@ define([
             this.rendered = false;
 
             this.template = _.template([
-                '<div class="header">' + this.txtAccessRights + '</div>',
-                '<table class="main">',
+                '<table class="main" style="margin: 30px 0;">',
                     '<tr class="rights">',
                         '<td class="left" style="vertical-align: top;"><label>' + this.txtRights + '</label></td>',
                         '<td class="right"><div id="id-info-rights"></div></td>',
                     '</tr>',
                     '<tr class="edit-rights">',
-                        '<td class="left"></td><td class="right"><button id="id-info-btn-edit" class="btn normal dlg-btn primary custom">' + this.txtBtnAccessRights + '</button></td>',
+                        '<td class="left"></td><td class="right"><button id="id-info-btn-edit" class="btn normal dlg-btn primary custom" style="margin-right: 10px;">' + this.txtBtnAccessRights + '</button></td>',
                     '</tr>',
                 '</table>'
             ].join(''));
@@ -1608,8 +1514,7 @@ define([
         },
 
         txtRights: 'Persons who have rights',
-        txtBtnAccessRights: 'Change access rights',
-        txtAccessRights: 'Access Rights'
+        txtBtnAccessRights: 'Change access rights'
     }, PE.Views.FileMenuPanels.DocumentRights || {}));
 
     PE.Views.FileMenuPanels.Help = Common.UI.BaseView.extend({
@@ -1619,7 +1524,7 @@ define([
         template: _.template([
             '<div style="width:100%; height:100%; position: relative;">',
                 '<div id="id-help-contents" style="position: absolute; width:220px; top: 0; bottom: 0;" class="no-padding"></div>',
-                '<div id="id-help-frame" class="no-padding"></div>',
+                '<div id="id-help-frame" style="position: absolute; left: 220px; top: 0; right: 0; bottom: 0;" class="no-padding"></div>',
             '</div>'
         ].join('')),
 
@@ -1702,17 +1607,16 @@ define([
             this.iFrame.frameBorder = "0";
             this.iFrame.width = "100%";
             this.iFrame.height = "100%";
-            if (Common.Utils.isChrome || Common.Utils.isOpera || Common.Utils.isGecko && Common.Utils.firefoxVersion>86)
-                this.iFrame.onload = function() {
-                    try {
-                        me.findUrl(me.iFrame.contentWindow.location.href);
-                    } catch (e) {
-                    }
-                };
-
             Common.Gateway.on('internalcommand', function(data) {
                 if (data.type == 'help:hyperlink') {
-                    me.findUrl(data.data);
+                    var src = data.data;
+                    var rec = me.viewHelpPicker.store.find(function(record){
+                        return (src.indexOf(record.get('src'))>0);
+                    });
+                    if (rec) {
+                        me.viewHelpPicker.selectRecord(rec, true);
+                        me.viewHelpPicker.scrollToRecord(rec);
+                    }
                 }
             });
             
@@ -1775,7 +1679,13 @@ define([
             }
             if (url) {
                 if (this.viewHelpPicker.store.length>0) {
-                    this.findUrl(url);
+                    var rec = this.viewHelpPicker.store.find(function(record){
+                        return (url.indexOf(record.get('src'))>=0);
+                    });
+                    if (rec) {
+                        this.viewHelpPicker.selectRecord(rec, true);
+                        this.viewHelpPicker.scrollToRecord(rec);
+                    }
                     this.onSelectItem(url);
                 } else
                     this.openUrl = url;
@@ -1784,16 +1694,6 @@ define([
 
         onSelectItem: function(src) {
             this.iFrame.src = this.urlPref + src;
-        },
-
-        findUrl: function(src) {
-            var rec = this.viewHelpPicker.store.find(function(record){
-                return (src.indexOf(record.get('src'))>=0);
-            });
-            if (rec) {
-                this.viewHelpPicker.selectRecord(rec, true);
-                this.viewHelpPicker.scrollToRecord(rec);
-            }
         }
     });
 
@@ -1802,30 +1702,23 @@ define([
         menu: undefined,
 
         template: _.template([
-            '<label id="id-fms-lbl-protect-header"><%= scope.strProtect %></label>',
+            '<label id="id-fms-lbl-protect-header" style="font-size: 18px;"><%= scope.strProtect %></label>',
             '<div id="id-fms-password">',
                 '<label class="header"><%= scope.strEncrypt %></label>',
-                '<div class="encrypt-block">',
-                    '<div class="description"><%= scope.txtProtectPresentation %></div>',
-                    '<div id="fms-btn-add-pwd"></div>',
-                '</div>',
-                '<div class="encrypted-block">',
-                    '<div class="description"><%= scope.txtEncrypted %></div>',
-                    '<div class="buttons">',
-                        '<div id="fms-btn-change-pwd"></div>',
-                        '<div id="fms-btn-delete-pwd"></div>',
-                    '</div>',
-                '</div>',
+                '<div id="fms-btn-add-pwd" style="width:190px;"></div>',
+                '<table id="id-fms-view-pwd" cols="2" width="300">',
+                    '<tr>',
+                        '<td colspan="2"><label style="cursor: default;"><%= scope.txtEncrypted %></label></td>',
+                    '</tr>',
+                    '<tr>',
+                        '<td><div id="fms-btn-change-pwd" style="width:190px;"></div></td>',
+                        '<td align="right"><div id="fms-btn-delete-pwd" style="width:190px; margin-left:20px;"></div></td>',
+                    '</tr>',
+                '</table>',
             '</div>',
             '<div id="id-fms-signature">',
                 '<label class="header"><%= scope.strSignature %></label>',
-                '<div class="add-signature-block">',
-                    '<div class="description"><%= scope.txtAddSignature %></div>',
-                    '<div id="fms-btn-invisible-sign"></div>',
-                '</div>',
-                '<div class="added-signature-block">',
-                    '<div class="description"><%= scope.txtAddedSignature %></div>',
-                '</div>',
+                '<div id="fms-btn-invisible-sign" style="width:190px; margin-bottom: 20px;"></div>',
                 '<div id="id-fms-signature-view"></div>',
             '</div>'
         ].join('')),
@@ -1837,13 +1730,15 @@ define([
 
             var me = this;
             this.templateSignature = _.template([
-                '<div class="<% if (!hasSigned) { %>hidden<% } %>"">',
-                    '<div class="signature-tip"><%= tipText %></div>',
-                    '<div class="buttons">',
-                        '<label class="link signature-view-link" data-hint="2" data-hint-direction="bottom" data-hint-offset="medium">' + me.txtView + '</label>',
-                        '<label class="link signature-edit-link <% if (!hasSigned) { %>hidden<% } %>" data-hint="2" data-hint-direction="bottom" data-hint-offset="medium">' + me.txtEdit + '</label>',
-                    '</div>',
-                '</div>'
+                '<table cols="2" width="300" class="<% if (!hasSigned) { %>hidden<% } %>"">',
+                    '<tr>',
+                        '<td colspan="2"><label style="cursor: default;"><%= tipText %></label></td>',
+                    '</tr>',
+                    '<tr>',
+                        '<td><label class="link signature-view-link" data-hint="2" data-hint-direction="bottom" data-hint-offset="medium">' + me.txtView + '</label></td>',
+                        '<td align="right"><label class="link signature-edit-link <% if (!hasSigned) { %>hidden<% } %>" data-hint="2" data-hint-direction="bottom" data-hint-offset="medium">' + me.txtEdit + '</label></td>',
+                    '</tr>',
+                '</table>'
             ].join(''));
         },
 
@@ -1865,8 +1760,7 @@ define([
             this.btnDeletePwd.on('click', _.bind(this.closeMenu, this));
 
             this.cntPassword = $('#id-fms-password');
-            this.cntEncryptBlock = this.$el.find('.encrypt-block');
-            this.cntEncryptedBlock = this.$el.find('.encrypted-block');
+            this.cntPasswordView = $('#id-fms-view-pwd');
 
             this.btnAddInvisibleSign = protection.getButton('signature');
             this.btnAddInvisibleSign.render(this.$el.find('#fms-btn-invisible-sign'));
@@ -1874,10 +1768,6 @@ define([
 
             this.cntSignature = $('#id-fms-signature');
             this.cntSignatureView = $('#id-fms-signature-view');
-
-            this.cntAddSignature = this.$el.find('.add-signature-block');
-            this.cntAddedSignature = this.$el.find('.added-signature-block');
-
             if (_.isUndefined(this.scroller)) {
                 this.scroller = new Common.UI.Scroller({
                     el: this.$el,
@@ -1954,16 +1844,10 @@ define([
 
             var tipText = (hasInvalid) ? this.txtSignedInvalid : (hasValid ? this.txtSigned : "");
             this.cntSignatureView.html(this.templateSignature({tipText: tipText, hasSigned: (hasValid || hasInvalid)}));
-
-            var isAddedSignature = this.btnAddInvisibleSign.$el.find('button').hasClass('hidden');
-            this.cntAddSignature.toggleClass('hidden', isAddedSignature);
-            this.cntAddedSignature.toggleClass('hidden', !isAddedSignature);
         },
 
         updateEncrypt: function() {
-            var isProtected = this.btnAddPwd.$el.find('button').hasClass('hidden');
-            this.cntEncryptBlock.toggleClass('hidden', isProtected);
-            this.cntEncryptedBlock.toggleClass('hidden', !isProtected);
+            this.cntPasswordView.toggleClass('hidden', this.btnAddPwd.isVisible());
         },
 
         strProtect: 'Protect Presentation',
@@ -1975,10 +1859,7 @@ define([
         notcriticalErrorTitle: 'Warning',
         txtEditWarning: 'Editing will remove the signatures from the presentation.<br>Are you sure you want to continue?',
         strEncrypt: 'With Password',
-        txtProtectPresentation: 'Encrypt this presentation with a password',
-        txtEncrypted: 'A password is required to open this presentation',
-        txtAddSignature: 'Ensure the integrity of the presentation by adding an<br>invisible digital signature',
-        txtAddedSignature: 'Valid signatures have been added to the presentation.<br>The presentation is protected from editing.'
+        txtEncrypted: 'This presentation has been protected by password'
 
     }, PE.Views.FileMenuPanels.ProtectDoc || {}));
 
@@ -1991,19 +1872,15 @@ define([
                 '<div id="id-print-settings" class="no-padding">',
                     '<div class="print-settings">',
                         '<div class="flex-settings ps-container oo settings-container">',
-                            '<div class="main-header"><%= scope.txtPrint %></div>',
                             '<table style="width: 100%;">',
                                 '<tbody>',
                                     '<tr><td><label class="header"><%= scope.txtPrintRange %></label></td></tr>',
-                                    '<tr><td class="padding-large"><div id="print-combo-range" style="width: 248px;"></div></td></tr>',
+                                    '<tr><td class="padding-small"><div id="print-combo-range" style="width: 248px;"></div></td></tr>',
                                     '<tr><td class="padding-large">',
-                                        '<table style="width: 100%;"><tbody>',
-                                        '<tr><td class="padding-large"><%= scope.txtPages %>:</td><td class="padding-large" style="width: 100%;"><div id="print-txt-pages" style="width: 100%;"></div></td></tr>',
-                                        '<tr><td><%= scope.txtCopies %>:</td><td style="width: 100%;"><div id="print-txt-copies" style="width: 60px;"></div></td></tr>',
+                                        '<table style="width: 100%;"><tbody><tr>',
+                                        '<td><%= scope.txtPages %></td><td><div id="print-txt-pages" style="width: 100%;padding-left: 5px;"></div></td>',
                                         '</tr></tbody></table>',
                                     '</td></tr>',
-                                    '<tr><td><label class="header"><%= scope.txtPrintSides %></label></td></tr>',
-                                    '<tr><td class="padding-large"><div id="print-combo-sides" style="width: 248px;"></div></td></tr>',
                                     '<tr><td><label class="header"><%= scope.txtPaperSize %></label></td></tr>',
                                     '<tr><td class="padding-large"><div id="print-combo-pages" style="width: 248px;"></div></td></tr>',
                                     '<tr class="fms-btn-apply"><td>',
@@ -2017,16 +1894,11 @@ define([
                         '</div>',
                     '</div>',
                 '</div>',
-                '<div id="print-preview-box" class="no-padding">',
+                '<div id="print-preview-box" style="position: absolute; left: 280px; top: 0; right: 0; bottom: 0;" class="no-padding">',
                     '<div id="print-preview"></div>',
                     '<div id="print-navigation">',
-                        '<% if (!isRTL) { %>',
-                            '<div id="print-prev-page"></div>',
-                            '<div id="print-next-page"></div>',
-                        '<% } else { %>',
-                            '<div id="print-next-page"></div>',
-                            '<div id="print-prev-page"></div>',
-                        '<% } %>',
+                        '<div id="print-prev-page" style="display: inline-block; margin-right: 4px;"></div>',
+                        '<div id="print-next-page" style="display: inline-block;"></div>',
                         '<div class="page-number">',
                             '<label><%= scope.txtPage %></label>',
                             '<div id="print-number-page"></div>',
@@ -2051,7 +1923,7 @@ define([
         render: function(node) {
             var me = this;
 
-            var $markup = $(this.template({scope: this, isRTL: Common.UI.isRTL()}));
+            var $markup = $(this.template({scope: this}));
 
             this.cmbRange = new Common.UI.ComboBox({
                 el: $markup.findById('#print-combo-range'),
@@ -2080,44 +1952,6 @@ define([
                 dataHintDirection: 'left',
                 dataHintOffset: 'small'
             });
-
-            this.spnCopies = new Common.UI.MetricSpinner({
-                el: $markup.findById('#print-txt-copies'),
-                step: 1,
-                width: 60,
-                defaultUnit : '',
-                value: 1,
-                maxValue: 32767,
-                minValue: 1,
-                allowDecimal: false,
-                maskExp: /[0-9]/,
-                dataHint: '2',
-                dataHintDirection: 'bottom',
-                dataHintOffset: 'big'
-            });
-
-            this.cmbSides = new Common.UI.ComboBox({
-                el          : $markup.findById('#print-combo-sides'),
-                menuStyle   : 'width:100%;',
-                editable: false,
-                takeFocusOnClose: true,
-                cls         : 'input-group-nr',
-                data        : [
-                    { value: 'one', displayValue: this.txtOneSide, descValue: this.txtOneSideDesc },
-                    { value: 'both-long', displayValue: this.txtBothSides, descValue: this.txtBothSidesLongDesc },
-                    { value: 'both-short', displayValue: this.txtBothSides, descValue: this.txtBothSidesShortDesc }
-                ],
-                itemsTemplate: _.template([
-                    '<% _.each(items, function(item) { %>',
-                    '<li id="<%= item.id %>" data-value="<%- item.value %>"><a tabindex="-1" type="menuitem" style ="display: flex; flex-direction: column;">',
-                    '<label><%= scope.getDisplayValue(item) %></label><label class="comment-text"><%= item.descValue %></label></a></li>',
-                    '<% }); %>'
-                ].join('')),
-                dataHint: '2',
-                dataHintDirection: 'bottom',
-                dataHintOffset: 'big'
-            });
-            this.cmbSides.setValue('one');
 
             this.cmbPaperSize = new Common.UI.ComboBox({
                 el: $markup.findById('#print-combo-pages'),
@@ -2165,7 +1999,6 @@ define([
                 parentEl: $markup.findById('#print-prev-page'),
                 cls: 'btn-prev-page',
                 iconCls: 'arrow',
-                scaling: false,
                 dataHint: '2',
                 dataHintDirection: 'top'
             });
@@ -2174,7 +2007,6 @@ define([
                 parentEl: $markup.findById('#print-next-page'),
                 cls: 'btn-next-page',
                 iconCls: 'arrow',
-                scaling: false,
                 dataHint: '2',
                 dataHintDirection: 'top'
             });
@@ -2239,7 +2071,7 @@ define([
         updateScroller: function() {
             if (this.scroller) {
                 Common.UI.Menu.Manager.hideAll();
-                var scrolled = this.$el.height()< this.pnlTable.height() + 25 + this.$el.find('.main-header').outerHeight(true);
+                var scrolled = this.$el.height()< this.pnlTable.height();
                 this.pnlSettings.css('overflow', scrolled ? 'hidden' : 'visible');
                 this.scroller.update();
             }
@@ -2304,14 +2136,7 @@ define([
         txtPageNumInvalid: 'Slide number invalid',
         txtEmptyTable: 'There is nothing to print because the presentation is empty',
         txtPages: 'Slides',
-        txtPaperSize: 'Paper size',
-        txtCopies: 'Copies',
-        txtPrintSides: 'Print sides',
-        txtOneSide: 'Print one sided',
-        txtOneSideDesc: 'Only print on one side of the page',
-        txtBothSides: 'Print on both sides',
-        txtBothSidesLongDesc: 'Flip pages on long edge',
-        txtBothSidesShortDesc: 'Flip pages on short edge'
+        txtPaperSize: 'Paper size'
 
     }, PE.Views.PrintWithPreview || {}));
 });

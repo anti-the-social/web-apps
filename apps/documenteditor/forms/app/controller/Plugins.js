@@ -1,5 +1,6 @@
 /*
- * (c) Copyright Ascensio System SIA 2010-2023
+ *
+ * (c) Copyright Ascensio System SIA 2010-2022
  *
  * This program is a free software product. You can redistribute it and/or
  * modify it under the terms of the GNU Affero General Public License (AGPL)
@@ -12,7 +13,7 @@
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR  PURPOSE. For
  * details, see the GNU AGPL at: http://www.gnu.org/licenses/agpl-3.0.html
  *
- * You can contact Ascensio System SIA at 20A-6 Ernesta Birznieka-Upish
+ * You can contact Ascensio System SIA at 20A-12 Ernesta Birznieka-Upisha
  * street, Riga, Latvia, EU, LV-1050.
  *
  * The  interactive user interfaces in modified source and object code versions
@@ -28,7 +29,7 @@
  * Creative Commons Attribution-ShareAlike 4.0 International. See the License
  * terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
  *
- */
+*/
 /**
  * User: Julia.Radzhabova
  * Date: 22.02.2022
@@ -173,18 +174,14 @@ define([
                     url: url,
                     frameId : frameId,
                     buttons: isCustomWindow ? undefined : newBtns,
-                    toolcallback: function(event) {
-                        me.api.asc_pluginButtonClick(-1, plugin.get_Guid());
-                    },
+                    toolcallback: _.bind(this.onToolClose, this),
                     help: !!help,
                     loader: plugin.get_Loader(),
                     modal: isModal!==undefined ? isModal : true
                 });
                 me.pluginDlg.on({
                     'render:after': function(obj){
-                        obj.getChild('.footer .dlg-btn').on('click', function(event) {
-                            me.api.asc_pluginButtonClick(parseInt(event.currentTarget.attributes['result'].value), plugin.get_Guid());
-                        });
+                        obj.getChild('.footer .dlg-btn').on('click', _.bind(me.onDlgBtnClick, me));
                         me.pluginContainer = me.pluginDlg.$window.find('#id-plugin-container');
                     },
                     'close': function(obj){
@@ -219,6 +216,15 @@ define([
                 if (callback)
                     callback.call();
             }
+        },
+
+        onDlgBtnClick: function(event) {
+            var state = event.currentTarget.attributes['result'].value;
+            this.api.asc_pluginButtonClick(parseInt(state));
+        },
+
+        onToolClose: function() {
+            this.api.asc_pluginButtonClick(-1);
         },
 
         onPluginMouseUp: function(x, y) {

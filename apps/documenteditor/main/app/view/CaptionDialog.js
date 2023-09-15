@@ -1,5 +1,6 @@
 /*
- * (c) Copyright Ascensio System SIA 2010-2023
+ *
+ * (c) Copyright Ascensio System SIA 2010-2019
  *
  * This program is a free software product. You can redistribute it and/or
  * modify it under the terms of the GNU Affero General Public License (AGPL)
@@ -12,7 +13,7 @@
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR  PURPOSE. For
  * details, see the GNU AGPL at: http://www.gnu.org/licenses/agpl-3.0.html
  *
- * You can contact Ascensio System SIA at 20A-6 Ernesta Birznieka-Upish
+ * You can contact Ascensio System SIA at 20A-12 Ernesta Birznieka-Upisha
  * street, Riga, Latvia, EU, LV-1050.
  *
  * The  interactive user interfaces in modified source and object code versions
@@ -48,8 +49,7 @@ define([
     DE.Views.CaptionDialog = Common.Views.AdvancedSettingsWindow.extend(_.extend({
         options: {
             contentWidth: 351,
-            height: 350,
-            id: 'window-caption'
+            height: 350
         },
 
         initialize : function(options) {
@@ -65,7 +65,7 @@ define([
                                     '<tr>',
                                         '<td colspan="3" class="padding-small">',
                                             '<label class="input-label">', me.textCaption,'</label>',
-                                            '<div id="caption-txt-caption" class="margin-right"></div>',
+                                            '<div id="caption-txt-caption" style="margin-right: 10px;"></div>',
                                         '</td>',
                                         '<td class="padding-small">',
                                             '<label class="input-label">', me.textInsert,'</label>',
@@ -75,10 +75,10 @@ define([
                                     '<tr>',
                                         '<td colspan="2" class="padding-small">',
                                             '<label class="input-label">', me.textLabel,'</label>',
-                                            '<div id="caption-combo-label" class="input-group-nr margin-right" style="width:160px;"></div>',
+                                            '<div id="caption-combo-label" class="input-group-nr" style="width:160px;margin-right: 10px;"></div>',
                                         '</td>',
                                         '<td class="padding-small" style="vertical-align: bottom;">',
-                                            '<button type="button" result="add" class="btn btn-text-default margin-right" id="caption-btn-add">', me.textAdd,'</button>',
+                                            '<button type="button" result="add" class="btn btn-text-default" id="caption-btn-add" style="margin-right: 10px;">', me.textAdd,'</button>',
                                         '</td>',
                                         '<td class="padding-small" style="vertical-align: bottom;">',
                                             '<button type="button" result="add" class="btn btn-text-default" id="caption-btn-delete">', me.textDelete,'</button>',
@@ -107,7 +107,7 @@ define([
                                     '<tr>',
                                         '<td colspan="2" class="padding-small">',
                                             '<label class="input-label">', me.textChapter,'</label>',
-                                            '<div id="caption-combo-chapter" class="input-group-nr margin-right" style="width:160px;"></div>',
+                                            '<div id="caption-combo-chapter" class="input-group-nr" style="width:160px;margin-right: 10px;"></div>',
                                         '</td>',
                                         '<td colspan="2" class="padding-small">',
                                             '<label class="input-label" >', me.textSeparator,'</label>',

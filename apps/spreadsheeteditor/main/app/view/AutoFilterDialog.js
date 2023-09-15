@@ -1,5 +1,6 @@
 /*
- * (c) Copyright Ascensio System SIA 2010-2023
+ *
+ * (c) Copyright Ascensio System SIA 2010-2019
  *
  * This program is a free software product. You can redistribute it and/or
  * modify it under the terms of the GNU Affero General Public License (AGPL)
@@ -12,7 +13,7 @@
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR  PURPOSE. For
  * details, see the GNU AGPL at: http://www.gnu.org/licenses/agpl-3.0.html
  *
- * You can contact Ascensio System SIA at 20A-6 Ernesta Birznieka-Upish
+ * You can contact Ascensio System SIA at 20A-12 Ernesta Birznieka-Upisha
  * street, Riga, Latvia, EU, LV-1050.
  *
  * The  interactive user interfaces in modified source and object code versions
@@ -28,7 +29,7 @@
  * Creative Commons Attribution-ShareAlike 4.0 International. See the License
  * terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
  *
- */
+*/
 /**
  *  AutoFilterDialog.js
  *
@@ -594,7 +595,7 @@ define([
                 this.lblAnd.toggleClass('hidden', !isBetween);
                 this.inputValue.$el.width(isBetween ? 100 : 225);
                 var me = this;
-                setTimeout(function () {
+                _.defer(function () {
                     if (me.inputValue) {
                         me.inputValue.focus();
                     }
@@ -614,7 +615,7 @@ define([
             this.cmbFields.setVisible(this.type=='value');
             this.cmbFields.on('selected', _.bind(function(combo, record) {
                 var me = this;
-                setTimeout(function () {
+                _.defer(function () {
                     if (me.inputValue) {
                         me.inputValue.focus();
                     }
@@ -909,41 +910,16 @@ define([
 
         loadDefaults: function () {
             if (this.properties) {
-                var idx = 0,
-                    sort = Asc.c_oAscSortOptions.Ascending;
+                var pivotObj = this.properties.asc_getPivotObj(),
+                    idx = pivotObj.asc_getDataFieldIndexSorting(),
+                    fields = pivotObj.asc_getDataFields(),
+                    sort = this.properties.asc_getSortState();
 
+                this.setTitle(this.txtTitle + ' (' + fields[0] + ')');
                 var arr = [];
-                if (this.properties.filter) {
-                    var filter = this.properties.filter,
-                        pivotObj = filter.asc_getPivotObj(),
-                        fields = pivotObj.asc_getDataFields();
-                    idx = pivotObj.asc_getDataFieldIndexSorting();
-                    sort = filter.asc_getSortState();
-                    fields && fields.forEach(function (item, index) {
-                        item && arr.push({value: index, displayValue: item, filter: filter, indexSorting: index});
-                    });
-                    this.setTitle(this.txtTitle + ' (' + fields[0] + ')');
-                } else if (this.properties.rowFilter && this.properties.colFilter) {
-                    this.setTitle(this.txtTitleValue);
-                    var pivotObj = this.properties.rowFilter.asc_getPivotObj(),
-                        fields = pivotObj.asc_getDataFields(),
-                        idxRow = pivotObj.asc_getDataFieldIndexSorting();
-                    arr.push({value: 0, displayValue: fields[0], filter: this.properties.rowFilter, indexSorting: 1});
-
-                    pivotObj = this.properties.colFilter.asc_getPivotObj();
-                    fields = pivotObj.asc_getDataFields();
-                    var idxCol = pivotObj.asc_getDataFieldIndexSorting();
-                    arr.push({value: 1, displayValue: fields[0], filter: this.properties.colFilter, indexSorting: 1});
-
-                    if (idxRow>0 || idxRow===idxCol) {
-                        idx = 0;
-                        sort = this.properties.rowFilter.asc_getSortState();
-                    } else {
-                        idx = 1;
-                        sort = this.properties.colFilter.asc_getSortState();
-                    }
-                }
-
+                fields && fields.forEach(function (item, index) {
+                    item && arr.push({value: index, displayValue: item});
+                });
                 this.cmbFieldsAsc.setData(arr);
                 this.cmbFieldsAsc.setValue((idx>=0) ? idx : 0);
                 this.cmbFieldsDesc.setData(arr);
@@ -951,20 +927,15 @@ define([
 
                 this.radioDesc.setValue(sort == Asc.c_oAscSortOptions.Descending, true);
                 this.cmbFieldsDesc.setDisabled(sort !== Asc.c_oAscSortOptions.Descending);
-                this.cmbFieldsAsc.setDisabled(sort === Asc.c_oAscSortOptions.Descending);
             }
         },
         save: function () {
             if (this.api && this.properties) {
                 var combo = this.radioAsc.getValue() ? this.cmbFieldsAsc : this.cmbFieldsDesc;
-                var rec = combo.getSelectedRecord();
-                if (rec) {
-                    var filter = rec.filter,
-                        pivotObj = filter.asc_getPivotObj();
-                    pivotObj.asc_setDataFieldIndexSorting(rec.indexSorting);
-                    filter.asc_setSortState(this.radioAsc.getValue() ? Asc.c_oAscSortOptions.Ascending : Asc.c_oAscSortOptions.Descending);
-                    this.api.asc_applyAutoFilter(filter);
-                }
+                var pivotObj = this.properties.asc_getPivotObj();
+                pivotObj.asc_setDataFieldIndexSorting(combo.getValue());
+                this.properties.asc_setSortState(this.radioAsc.getValue() ? Asc.c_oAscSortOptions.Ascending : Asc.c_oAscSortOptions.Descending);
+                this.api.asc_applyAutoFilter(this.properties);
             }
         },
 
@@ -975,7 +946,6 @@ define([
         },
 
         txtTitle: "Sort",
-        txtTitleValue: "Sort by value",
         textAsc: 'Ascenging (A to Z) by',
         textDesc: 'Descending (Z to A) by'
 
@@ -1010,8 +980,8 @@ define([
                 '<div class="box" style="height: 100%; display: flex; justify-content: space-between;">',
                     '<div class="content-panel">',
                         '<div class="" style="display: flex; flex-direction: column; justify-content: flex-start; height: calc(100% - 37px);">',
-                            '<div id="id-sd-cell-search" style="height:22px; margin-bottom:10px;flex-shrink: 0;"></div>',
-                            '<div class="border-values" style="overflow: hidden; flex-grow: 1;display: flex;">',
+                            '<div id="id-sd-cell-search" style="height:22px; margin-bottom:10px;"></div>',
+                            '<div class="border-values" style="overflow: hidden; flex-grow: 1;">',
                                 '<div id="id-dlg-filter-values" class="combo-values" style=""></div>',
                             '</div>',
                         '</div>',
@@ -1330,7 +1300,7 @@ define([
                     el: $('#id-dlg-filter-values', this.$window),
                     store: this.cells,
                     simpleAddMode: true,
-                    template: _.template(['<div class="listview inner" style="border:none;height:auto;"></div>'].join('')),
+                    template: _.template(['<div class="listview inner" style="border:none;"></div>'].join('')),
                     itemTemplate: _.template([
                         '<div>',
                             '<label class="checkbox-indeterminate" style="position:absolute;">',
@@ -1384,7 +1354,9 @@ define([
                 $(document.body).on('mousedown', checkDocumentClick);
             }, 100, this);
 
-            this.cellsList.scroller.update({minScrollbarLength  : this.cellsList.minScrollbarLength, alwaysVisibleY: true, suppressScrollX: true});
+            if(Common.Utils.InternalSettings.get('sse-settings-size-filter-window')) {
+                this.cellsList.scroller.update({minScrollbarLength  : this.cellsList.minScrollbarLength, alwaysVisibleY: true, suppressScrollX: true});
+            }
         },
 
         show: function (x, y) {
@@ -1429,7 +1401,7 @@ define([
                 });
             this.close();
 
-            dlgSort.setSettings({filter : this.configTo});
+            dlgSort.setSettings(this.configTo);
             dlgSort.show();
         },
 
@@ -1971,6 +1943,7 @@ define([
             }
             this.btnOk.setDisabled(this.cells.length<1);
             this.cellsList.scroller.update({minScrollbarLength  : this.cellsList.minScrollbarLength, alwaysVisibleY: true, suppressScrollX: true});
+            this.cellsList.cmpEl.toggleClass('scroll-padding', this.cellsList.scroller.isVisible());
         },
 
         testFilter: function () {

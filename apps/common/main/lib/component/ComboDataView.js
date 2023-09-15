@@ -1,5 +1,6 @@
 /*
- * (c) Copyright Ascensio System SIA 2010-2023
+ *
+ * (c) Copyright Ascensio System SIA 2010-2019
  *
  * This program is a free software product. You can redistribute it and/or
  * modify it under the terms of the GNU Affero General Public License (AGPL)
@@ -12,7 +13,7 @@
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR  PURPOSE. For
  * details, see the GNU AGPL at: http://www.gnu.org/licenses/agpl-3.0.html
  *
- * You can contact Ascensio System SIA at 20A-6 Ernesta Birznieka-Upish
+ * You can contact Ascensio System SIA at 20A-12 Ernesta Birznieka-Upisha
  * street, Riga, Latvia, EU, LV-1050.
  *
  * The  interactive user interfaces in modified source and object code versions
@@ -28,7 +29,7 @@
  * Creative Commons Attribution-ShareAlike 4.0 International. See the License
  * terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
  *
- */
+*/
 /**
  *  ComboDataView.js
  *
@@ -114,7 +115,7 @@ define([
             this.openButton = new Common.UI.Button({
                 cls: 'open-menu',
                 menu: new Common.UI.Menu({
-                    menuAlign: Common.UI.isRTL() ? 'tr-tr' : 'tl-tl',
+                    menuAlign: 'tl-tl',
                     offset: [0, 3],
                     items: [
                         {template: _.template('<div class="menu-picker-container"></div>')}
@@ -298,7 +299,7 @@ define([
                 var itemMargins = parseFloat(itemEl.css('margin-left')) + parseFloat(itemEl.css('margin-right'));
 
                 var fieldPickerEl = this.fieldPicker.$el;
-                var fieldPickerPadding = parseFloat(fieldPickerEl.css(Common.UI.isRTL() ? 'padding-left' : 'padding-right'));
+                var fieldPickerPadding = parseFloat(fieldPickerEl.css('padding-right'));
                 var fieldPickerBorder = parseFloat(fieldPickerEl.css('border-width'));
                 var dataviewPaddings = parseFloat(this.fieldPicker.$el.find('.dataview').css('padding-left')) + parseFloat(this.fieldPicker.$el.find('.dataview').css('padding-right'));
 

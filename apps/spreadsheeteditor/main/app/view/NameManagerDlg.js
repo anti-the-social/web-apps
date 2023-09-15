@@ -1,5 +1,6 @@
 /*
- * (c) Copyright Ascensio System SIA 2010-2023
+ *
+ * (c) Copyright Ascensio System SIA 2010-2019
  *
  * This program is a free software product. You can redistribute it and/or
  * modify it under the terms of the GNU Affero General Public License (AGPL)
@@ -12,7 +13,7 @@
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR  PURPOSE. For
  * details, see the GNU AGPL at: http://www.gnu.org/licenses/agpl-3.0.html
  *
- * You can contact Ascensio System SIA at 20A-6 Ernesta Birznieka-Upish
+ * You can contact Ascensio System SIA at 20A-12 Ernesta Birznieka-Upisha
  * street, Riga, Latvia, EU, LV-1050.
  *
  * The  interactive user interfaces in modified source and object code versions
@@ -28,7 +29,7 @@
  * Creative Commons Attribution-ShareAlike 4.0 International. See the License
  * terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
  *
- */
+*/
 /**
  *
  *  NameManagerDlg.js
@@ -51,10 +52,9 @@ define([  'text!spreadsheeteditor/main/app/template/NameManagerDlg.template',
     SSE.Views.NameManagerDlg =  Common.Views.AdvancedSettingsWindow.extend(_.extend({
         options: {
             alias: 'NameManagerDlg',
-            contentWidth: 540,
-            height: 330,
-            buttons: null,
-            id: 'window-name-manager'
+            contentWidth: 525,
+            height: 353,
+            buttons: null
         },
 
         initialize: function (options) {
@@ -65,6 +65,7 @@ define([  'text!spreadsheeteditor/main/app/template/NameManagerDlg.template',
                     '<div class="box" style="height:' + (this.options.height-85) + 'px;">',
                     '<div class="content-panel" style="padding: 0;">' + _.template(contentTemplate)({scope: this}) + '</div>',
                     '</div>',
+                    '<div class="separator horizontal"></div>',
                     '<div class="footer center">',
                     '<button class="btn normal dlg-btn" result="cancel" style="width: 86px;">' + this.closeButtonText + '</button>',
                     '</div>'
@@ -118,18 +119,12 @@ define([  'text!spreadsheeteditor/main/app/template/NameManagerDlg.template',
                 store: new Common.UI.DataViewStore(),
                 simpleAddMode: true,
                 emptyText: this.textEmpty,
-                headers: [
-                    {name: me.textRanges,       width: 171, sortType:'name',        style: 'padding-' + Common.UI.isRTL() ? 'left' : 'right' + ': 12px;'},
-                    {name: me.textScope,        width: 122, sortType:'scopeName',   style: 'padding-'+ Common.UI.isRTL() ? 'left' : 'right' + ': 12px;'},
-                    {name: me.textDataRange,    width: 213},
-                ],
-                initSort:{type: this.sort.type, direction: this.sort.direction},
                 itemTemplate: _.template([
                         '<div id="<%= id %>" class="list-item" style="width: 100%;display:inline-block;<% if (!lock) { %>pointer-events:none;<% } %>">',
                             '<div class="listitem-icon toolbar__icon <% print(isTable?"btn-menu-table":(isSlicer ? "btn-slicer" : "btn-named-range")) %>"></div>',
-                            '<div style="width:146px;padding-<% if (Common.UI.isRTL()) { %>left<% } else {%>right<% } %>: 5px;"><%= Common.Utils.String.htmlEncode(name) %></div>',
-                            '<div style="width:122px;padding-<% if (Common.UI.isRTL()) { %>left<% } else {%>right<% } %>: 5px;"><%= scopeName %></div>',
-                            '<div style="width:209px;"><%= range %></div>',
+                            '<div style="width:141px;padding-right: 5px;"><%= Common.Utils.String.htmlEncode(name) %></div>',
+                            '<div style="width:117px;padding-right: 5px;"><%= scopeName %></div>',
+                            '<div style="width:204px;"><%= range %></div>',
                             '<% if (lock) { %>',
                                 '<div class="lock-user"><%=lockuser%></div>',
                             '<% } %>',
@@ -163,12 +158,20 @@ define([  'text!spreadsheeteditor/main/app/template/NameManagerDlg.template',
             });
             this.btnDeleteRange.on('click', _.bind(this.onDeleteRange, this));
 
-            this.rangeList.on('header:click',  _.bind(this.onSortNames, this));
+            $('#name-manager-sort-name').on('click', _.bind(this.onSortNames, this, 'name'));
+            $('#name-manager-sort-scope').on('click', _.bind(this.onSortNames, this, 'scopeName'));
+            this.spanSortName = $('#name-manager-sort-name-span');
+            this.spanSortScope = $('#name-manager-sort-scope-span');
+            (this.sort.type=='name') ? this.spanSortScope.addClass('hidden') : this.spanSortName.addClass('hidden');
+            if (this.sort.direction<0) {
+                (this.sort.type=='name') ? this.spanSortName.addClass('sort-desc') : this.spanSortScope.addClass('sort-desc');
+            }
+
             this.afterRender();
         },
 
         getFocusedComponents: function() {
-            return [ this.cmbFilter, this.btnNewRange, this.btnEditRange, this.btnDeleteRange, this.rangeList];
+            return [ this.cmbFilter, this.rangeList, this.btnNewRange, this.btnEditRange, this.btnDeleteRange ];
         },
 
         getDefaultFocusableComponent: function () {
@@ -357,8 +360,16 @@ define([  'text!spreadsheeteditor/main/app/template/NameManagerDlg.template',
             this.close();
         },
 
-        onSortNames: function(type, direction) {
-            this.sort = {type: type, direction: direction};
+        onSortNames: function(type) {
+            if (type !== this.sort.type) {
+                this.sort = {type: type, direction: 1};
+                this.spanSortName.toggleClass('hidden');
+                this.spanSortScope.toggleClass('hidden');
+            } else {
+                this.sort.direction = -this.sort.direction;
+            }
+            var sorted = (type=='name') ? this.spanSortName : this.spanSortScope;
+            (this.sort.direction>0) ? sorted.removeClass('sort-desc') : sorted.addClass('sort-desc');
 
             this.rangeList.store.sort();
             this.rangeList.onResetItems();

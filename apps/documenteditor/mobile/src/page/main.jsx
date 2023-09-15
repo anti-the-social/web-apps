@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
 import { CSSTransition } from 'react-transition-group';
-import { f7, Icon, FabButtons, FabButton, Page, View, Navbar, Subnavbar } from 'framework7-react';
+import { f7, Link, Fab, Icon, FabButtons, FabButton, Page, View, Navbar, Subnavbar } from 'framework7-react';
 import { observer, inject } from "mobx-react";
 import { withTranslation } from 'react-i18next';
 import EditOptions from '../view/edit/Edit';
@@ -15,7 +15,7 @@ import { Toolbar } from "../controller/Toolbar";
 import NavigationController from '../controller/settings/Navigation';
 import { AddLinkController } from '../controller/add/AddLink';
 import EditHyperlink from '../controller/edit/EditHyperlink';
-import Snackbar from '../components/Snackbar/Snackbar';
+import Snackbar from "../components/Snackbar/Snackbar";
 
 class MainPage extends Component {
     constructor(props) {
@@ -116,7 +116,7 @@ class MainPage extends Component {
         f7.popover.close('.document-menu.modal-in', false);
         f7.navbar.show('.main-navbar', false);
 
-        appOptions.changeViewerMode(false);
+        appOptions.changeViewerMode();
         api.asc_removeRestriction(Asc.c_oAscRestrictionType.View)
         api.asc_addRestriction(Asc.c_oAscRestrictionType.None);
     };
@@ -135,8 +135,7 @@ class MainPage extends Component {
         const disabledControls = storeToolbarSettings.disabledControls;
         const disabledSettings = storeToolbarSettings.disabledSettings;
         const isProtected = appOptions.isProtected;
-        const typeProtection = appOptions.typeProtection;
-        const isFabShow = isViewer && !disabledSettings && !disabledControls && !isDisconnected && isAvailableExt && isEdit && (!isProtected || typeProtection === Asc.c_oAscEDocProtect.TrackedChanges);
+        const isFabShow = isViewer && !disabledSettings && !disabledControls && !isDisconnected && isAvailableExt && isEdit && !isProtected;
         const config = appOptions.config;
         const isShowPlaceholder = !appOptions.isDocReady && (!config.customization || !(config.customization.loaderName || config.customization.loaderLogo));
 
@@ -206,11 +205,23 @@ class MainPage extends Component {
                 {/* {
                     Device.phone ? null : <SearchSettings />
                 } */}
-                <Snackbar 
-                    isShowSnackbar={this.state.snackbarVisible} 
-                    closeCallback={() => this.handleOptionsViewClosed('snackbar')}
-                    message={isMobileView ? t("Toolbar.textSwitchedMobileView") : t("Toolbar.textSwitchedStandardView")} 
-                />
+                <CSSTransition
+                    in={this.state.snackbarVisible}
+                    timeout={1500}
+                    classNames="snackbar"
+                    mountOnEnter
+                    unmountOnExit
+                    onEntered={(node, isAppearing) => {
+                        if(!isAppearing) {
+                            this.setState({
+                                snackbarVisible: false
+                            });
+                        }
+                    }}
+                >
+                    <Snackbar
+                        text={isMobileView ? t("Toolbar.textSwitchedMobileView") : t("Toolbar.textSwitchedStandardView")}/>
+                </CSSTransition>
                 <SearchSettings useSuspense={false}/>
                 {
                     !this.state.editOptionsVisible ? null :
@@ -249,9 +260,9 @@ class MainPage extends Component {
                         mountOnEnter
                         unmountOnExit
                     >
-                        <div className="fab fab-right-bottom" onClick={() => this.turnOffViewerMode()}>
-                            <a href="#"><i className="icon icon-edit-mode"></i></a>
-                        </div>
+                        <Fab position="right-bottom" slot="fixed" onClick={() => this.turnOffViewerMode()}>
+                            <Icon icon="icon-edit-mode"/>
+                        </Fab>
                     </CSSTransition>
                 }
                 {appOptions.isDocReady && <ContextMenu openOptions={this.handleClickToOpenOptions.bind(this)}/>}

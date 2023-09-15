@@ -123,8 +123,6 @@
 @import "../../../../common/main/resources/less/history.less";
 @import "../../../../common/main/resources/less/hint-manager.less";
 @import "../../../../common/main/resources/less/label.less";
-@import "../../../../common/main/resources/less/bigscaling.less";
-@import "../../../../common/main/resources/less/updown-picker.less";
 
 // App
 // --------------------------------------------------
@@ -149,39 +147,16 @@
 @import "sprites/iconssmall@1.75x";
 @import "sprites/iconsbig@1.75x";
 
-.font-size-tiny {
-    .fontsize(9px); // 9px
-    .fontsize(calc(@font-size-base-app - 2px)); // 9px
-}
-
 .font-size-small {
-    .fontsize(10px); // 10px
-    .fontsize(calc(@font-size-base-app - 1px)); // 10px
+    .fontsize(@font-size-small);
 }
 
 .font-size-normal {
-    .fontsize(11px); // 11px
-    .fontsize(@font-size-base-app); // 11px
-}
-
-.font-size-medium {
-    .fontsize(12px); // 12px
-    .fontsize(calc(@font-size-base-app + 1px)); // 12px
+    .fontsize(@font-size-base);
 }
 
 .font-size-large {
-    .fontsize(13px); // 13px
-    .fontsize(calc(@font-size-base-app + 2px)); // 13px
-}
-
-.font-size-huge {
-    .fontsize(14px); // 14px
-    .fontsize(calc(@font-size-base-app + 3px)); // 14px
-}
-
-.font-size-very-huge {
-    .fontsize(16px); // 16px
-    .fontsize(calc(@font-size-base-app + 5px)); // 16px
+    .fontsize(@font-size-large);
 }
 
 .slidenum-div {
@@ -213,6 +188,14 @@
             background-position: -20px @top-position;
         }
     }
+}
+
+#slide-texture-img-box {
+    background: @background-normal;
+    border: @scaled-one-px-value solid @border-regular-control;
+    border-radius: 2px;
+    float: right;
+    padding: 14px 20px;
 }
 
 // Skeleton of document
@@ -259,10 +242,10 @@
             border-radius: 6px;
             background: #f5f5f5;
 
-            //-webkit-animation: flickerAnimation 2s infinite ease-in-out;
-            //-moz-animation: flickerAnimation 2s infinite ease-in-out;
-            //-o-animation: flickerAnimation 2s infinite ease-in-out;
-            //animation: flickerAnimation 2s infinite ease-in-out;
+            -webkit-animation: flickerAnimation 2s infinite ease-in-out;
+            -moz-animation: flickerAnimation 2s infinite ease-in-out;
+            -o-animation: flickerAnimation 2s infinite ease-in-out;
+            animation: flickerAnimation 2s infinite ease-in-out;
 
             &:nth-child(1) {
                 height: 30%;

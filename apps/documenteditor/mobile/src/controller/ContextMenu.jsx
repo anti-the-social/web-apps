@@ -20,13 +20,12 @@ import EditorUIController from '../lib/patch';
     displayMode: stores.storeReview.displayMode,
     dataDoc: stores.storeDocumentInfo.dataDoc,
     objects: stores.storeFocusObjects.settings,
-    isViewer: stores.storeAppOptions.isViewer,
-    isProtected: stores.storeAppOptions.isProtected,
-    typeProtection: stores.storeAppOptions.typeProtection
+    isViewer: stores.storeAppOptions.isViewer
 }))
 class ContextMenu extends ContextMenuController {
     constructor(props) {
         super(props);
+
         // console.log('context menu controller created');
         this.onApiShowComment = this.onApiShowComment.bind(this);
         this.onApiHideComment = this.onApiHideComment.bind(this);
@@ -283,15 +282,13 @@ class ContextMenu extends ContextMenuController {
         } else {
             const { t } = this.props;
             const _t = t("ContextMenu", {returnObjects: true});
-            const { canViewComments, canCoAuthoring, canComments, dataDoc, isProtected, typeProtection } = this.props;
+            const { canViewComments, canCoAuthoring, canComments, dataDoc } = this.props;
 
             const api = Common.EditorApi.get();
             const inToc = api.asc_GetTableOfContentsPr(true);
             const stack = api.getSelectedElements();
             const canCopy = api.can_CopyCut();
             const docExt = dataDoc ? dataDoc.fileType : '';
-            const isAllowedEditing = !isProtected || typeProtection === Asc.c_oAscEDocProtect.TrackedChanges;
-            const isAllowedCommenting = typeProtection === Asc.c_oAscEDocProtect.Comments; 
 
             let isText = false,
                 isObject = false,
@@ -327,14 +324,14 @@ class ContextMenu extends ContextMenuController {
             }
 
             if (!isDisconnected) {
-                if (canFillForms && canCopy && !locked && (!isViewer || docExt === 'oform') && isAllowedEditing) {
+                if (canFillForms && canCopy && !locked && (!isViewer || docExt === 'oform')) {
                     itemsIcon.push({
                         event: 'cut',
                         icon: 'icon-cut'
                     });
                 }
 
-                if (canFillForms && canCopy && !locked && (!isViewer || docExt === 'oform') && isAllowedEditing) {
+                if (canFillForms && canCopy && !locked && (!isViewer || docExt === 'oform')) {
                     itemsIcon.push({
                         event: 'paste',
                         icon: 'icon-paste'
@@ -348,7 +345,7 @@ class ContextMenu extends ContextMenuController {
                     });
                 }
 
-                if (api.can_AddQuotedComment() !== false && canCoAuthoring && canComments && !locked && !(!isText && isObject) && (!isViewer || canEditComments) && (isAllowedEditing || isAllowedCommenting)) {
+                if (api.can_AddQuotedComment() !== false && canCoAuthoring && canComments && !locked && !(!isText && isObject) && !isViewer && canEditComments) {
                     itemsText.push({
                         caption: _t.menuAddComment,
                         event: 'addcomment'
@@ -361,16 +358,13 @@ class ContextMenu extends ContextMenuController {
                     caption: _t.menuOpenLink,
                     event: 'openlink'
                 });
-
-                if(isAllowedEditing) {
-                    itemsText.push({
-                        caption: t('ContextMenu.menuEditLink'),
-                        event: 'editlink'
-                    });
-                }
+                itemsText.push({
+                    caption: t('ContextMenu.menuEditLink'),
+                    event: 'editlink'
+                });
             }
 
-            if(inToc && isEdit && !isViewer && isAllowedEditing) {
+            if(inToc && isEdit && !isViewer) {
                 itemsText.push({
                     caption: t('ContextMenu.textRefreshEntireTable'),
                     event: 'refreshEntireTable'

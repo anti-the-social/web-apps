@@ -187,23 +187,33 @@ const PageAdditionalFormatting = props => {
 
 const PageBullets = observer( props => {
     const storeTextSettings = props.storeTextSettings;
-    const bulletArrays = storeTextSettings.getBulletsList();
     const typeBullets = storeTextSettings.typeBullets;
+    const bulletArrays = [
+        { type: 0, subtype: -1 },
+        { type: 0, subtype: 1 },
+        { type: 0, subtype: 2 },
+        { type: 0, subtype: 3 },
+        { type: 0, subtype: 4 },
+        { type: 0, subtype: 5 },
+        { type: 0, subtype: 6 },
+        { type: 0, subtype: 7 }
+    ];
 
     useEffect(() => {
-        props.updateBulletsNumbers(0);
-        props.getIconsBulletsAndNumbers(bulletArrays, 0);
+        props.getIconsBulletsAndNumbers($$('.item-marker'), 0);
     }, []);
     
     return(
         <View className='bullets dataview'>
             <List className="row" style={{listStyle: 'none'}}>
                 {bulletArrays.map( bullet => (
-                    <ListItem key={'bullet-' + bullet.subtype} data-type={bullet.subtype} className={(bullet.subtype === typeBullets) ? 'active' : ''}
+                    <ListItem key={'bullet-' + bullet.subtype} data-type={bullet.subtype} className={(bullet.subtype === typeBullets) && 
+                        (storeTextSettings.listType === 0 || storeTextSettings.listType === -1) ? 'active' : ''}
                         onClick={() => {
-                            props.onBullet(bullet.numberingInfo);
+                            storeTextSettings.resetBullets(bullet.subtype);
+                            props.onBullet(bullet.subtype);
                         }}>
-                        <div id={bullet.id} className='item-marker'></div>
+                        <div id={`id-markers-${bullet.subtype}`} className='item-marker'></div>
                     </ListItem>
                 ))}
             </List>
@@ -213,23 +223,33 @@ const PageBullets = observer( props => {
 
 const PageNumbers = observer( props => {
     const storeTextSettings = props.storeTextSettings;
-    const numberArrays = storeTextSettings.getNumbersList();
     const typeNumbers = storeTextSettings.typeNumbers;
+    const numberArrays = [
+        { type: 1, subtype: -1},
+        { type: 1, subtype: 4 },
+        { type: 1, subtype: 5 },
+        { type: 1, subtype: 6 },
+        { type: 1, subtype: 1 },
+        { type: 1, subtype: 2 },
+        { type: 1, subtype: 3 },
+        { type: 1, subtype: 7 }
+    ];
 
     useEffect(() => {
-        props.updateBulletsNumbers(1);
-        props.getIconsBulletsAndNumbers(numberArrays, 1);
+        props.getIconsBulletsAndNumbers($$('.item-number'), 1);
     }, []);
     
     return (
         <View className='numbers dataview'>
             <List className="row" style={{listStyle: 'none'}}>
             {numberArrays.map( number => (
-                        <ListItem key={'number-' + number.subtype} data-type={number.subtype} className={(number.subtype === typeNumbers) ? 'active' : ''}
+                        <ListItem key={'number-' + number.subtype} data-type={number.subtype} className={(number.subtype === typeNumbers) && 
+                            (storeTextSettings.listType === 1 || storeTextSettings.listType === -1) ? 'active' : ''}
                             onClick={() => {
-                                props.onNumber(number.numberingInfo);
+                                storeTextSettings.resetNumbers(number.subtype);
+                                props.onNumber(number.subtype);
                             }}>
-                            <div id={number.id} className='item-number'></div>
+                            <div id={`id-numbers-${number.subtype}`} className='item-number'></div>
                         </ListItem>
                     ))}
             </List>
@@ -239,12 +259,16 @@ const PageNumbers = observer( props => {
 
 const PageMultiLevel = observer( props => {
     const storeTextSettings = props.storeTextSettings;
-    const arrayMultiLevel = storeTextSettings.getMultiLevelList();
     const typeMultiLevel = storeTextSettings.typeMultiLevel;
+    const arrayMultiLevel = [
+        { type: 2, subtype: -1 },
+        { type: 2, subtype: 1 },
+        { type: 2, subtype: 2 },
+        { type: 2, subtype: 3 },
+    ];
 
     useEffect(() => {
-        props.updateBulletsNumbers(2);
-        props.getIconsBulletsAndNumbers(arrayMultiLevel, 2);
+        props.getIconsBulletsAndNumbers($$('.item-multilevellist'), 2);
     }, []);
 
     return(
@@ -254,9 +278,9 @@ const PageMultiLevel = observer( props => {
                         <ListItem
                         key={'multi-level-' + item.subtype} 
                         data-type={item.subtype} 
-                        className={item.subtype === typeMultiLevel ? 'active' : ''}
-                        onClick={() => props.onMultiLevelList(item.numberingInfo)}>
-                            <div id={item.id} className='item-multilevellist'>
+                        className={item.subtype === typeMultiLevel && storeTextSettings.listType === -1  ? 'active' : ''}
+                        onClick={() => props.onMultiLevelList(item.subtype)}>
+                            <div id={`id-multilevellists-${item.subtype}`} className='item-multilevellist'>
 
                             </div>
                         </ListItem>
@@ -282,35 +306,29 @@ const PageBulletsAndNumbers = props => {
                     </NavRight>
                 }
             </Navbar>
-            <div className="swiper-container swiper-init" data-pagination='{"el": ".swiper-pagination"}'>
-                <div className="swiper-wrapper">
-                    <div className="swiper-slide">
-                        <PageNumbers 
-                            storeTextSettings={storeTextSettings} 
-                            onNumber={props.onNumber} 
-                            getIconsBulletsAndNumbers={props.getIconsBulletsAndNumbers}
-                            updateBulletsNumbers={props.updateBulletsNumbers}
-                        />
-                    </div>
-                    <div className="swiper-slide">
-                        <PageBullets 
-                            storeTextSettings={storeTextSettings} 
-                            onBullet={props.onBullet} 
-                            getIconsBulletsAndNumbers={props.getIconsBulletsAndNumbers}
-                            updateBulletsNumbers={props.updateBulletsNumbers}
-                        />
-                    </div>
-                    <div className="swiper-slide">
-                        <PageMultiLevel 
-                            storeTextSettings={storeTextSettings} 
-                            onMultiLevelList={props.onMultiLevelList} 
-                            getIconsBulletsAndNumbers={props.getIconsBulletsAndNumbers}
-                            updateBulletsNumbers={props.updateBulletsNumbers}
-                        />
-                    </div>
-                </div>
-                <div className="swiper-pagination"></div>
-            </div>
+            <Swiper pagination>
+                <SwiperSlide>
+                    <PageNumbers 
+                        storeTextSettings={storeTextSettings} 
+                        onNumber={props.onNumber} 
+                        getIconsBulletsAndNumbers={props.getIconsBulletsAndNumbers} 
+                    />
+                </SwiperSlide> 
+                <SwiperSlide>
+                    <PageBullets 
+                        storeTextSettings={storeTextSettings} 
+                        onBullet={props.onBullet} 
+                        getIconsBulletsAndNumbers={props.getIconsBulletsAndNumbers}
+                    />
+                </SwiperSlide>
+                <SwiperSlide> 
+                    <PageMultiLevel 
+                        storeTextSettings={storeTextSettings} 
+                        onMultiLevelList={props.onMultiLevelList} 
+                        getIconsBulletsAndNumbers={props.getIconsBulletsAndNumbers}
+                    />
+                </SwiperSlide>
+            </Swiper>
         </Page>
     )
 };
@@ -498,7 +516,6 @@ const EditText = props => {
     const isStrikethrough = storeTextSettings.isStrikethrough;
     const paragraphAlign = storeTextSettings.paragraphAlign;
 
-    props.updateListType();
     let previewList;
     switch(storeTextSettings.listType) {
         case -1: 
@@ -599,7 +616,6 @@ const EditText = props => {
                         onNumber: props.onNumber,
                         onMultiLevelList: props.onMultiLevelList,
                         getIconsBulletsAndNumbers: props.getIconsBulletsAndNumbers,
-                        updateBulletsNumbers: props.updateBulletsNumbers
                     }}>
                         <div className="preview">{previewList}</div>
                         {!isAndroid && <Icon slot="media" icon="icon-bullets"></Icon>}

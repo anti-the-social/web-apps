@@ -260,10 +260,9 @@ class EditTextController extends Component {
         const arr = [];
 
         arrayElements.forEach( item => {
-            arr.push({
-                numberingInfo: {bullet: item.numberingInfo==='undefined' ? undefined : JSON.parse(item.numberingInfo)},
-                divId: item.id
-            });
+            let data = item.drawdata;
+            data['divId'] = item.id;
+            arr.push(data);
         });
         if (api) api.SetDrawImagePreviewBulletForMenu(arr, type);
     }

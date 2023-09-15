@@ -29,7 +29,7 @@ const stringUtcToLocalDate = (date) => {
         return parseInt(date) + timeZoneOffsetInMs;
     return 0;
 };
-const dateToLocaleTimeString = (date, lang) => {
+const dateToLocaleTimeString = (date) => {
     const format = (date) => {
         let hours = date.getHours();
         let minutes = date.getMinutes();
@@ -40,14 +40,6 @@ const dateToLocaleTimeString = (date, lang) => {
         minutes = minutes < 10 ? '0' + minutes : minutes;
         return hours + ':' + minutes + ' ' + ampm;
     };
-    lang = (lang || 'en').replace('_', '-').toLowerCase();
-    try {
-        return date.toLocaleString(lang, {dateStyle: 'short', timeStyle: 'short'});
-    } catch (e) {
-        lang = 'en';
-        return date.toLocaleString(lang, {dateStyle: 'short', timeStyle: 'short'});
-    }
-
     // MM/dd/yyyy hh:mm AM
     return (date.getMonth() + 1) + '/' + (date.getDate()) + '/' + date.getFullYear() + ' ' + format(date);
 };
@@ -148,7 +140,7 @@ class CommentsController extends Component {
         changeComment.resolved = data.asc_getSolved();
         changeComment.quote = data.asc_getQuoteText();
         changeComment.time = date.getTime();
-        changeComment.date = dateToLocaleTimeString(date, this.appOptions.lang);
+        changeComment.date = dateToLocaleTimeString(date);
         changeComment.editable = (this.appOptions.canEditComments || (data.asc_getUserId() === this.curUserId)) && AscCommon.UserInfoParser.canEditComment(name);
         changeComment.removable = (this.appOptions.canDeleteComments || (data.asc_getUserId() === this.curUserId)) && AscCommon.UserInfoParser.canDeleteComment(name);
         changeComment.hide = !AscCommon.UserInfoParser.canViewComment(name);
@@ -171,7 +163,7 @@ class CommentsController extends Component {
                 userName: userName,
                 parsedName: Common.Utils.String.htmlEncode(parsedName),
                 userColor: (user) ? user.asc_getColor() : null,
-                date: dateToLocaleTimeString(dateReply, this.appOptions.lang),
+                date: dateToLocaleTimeString(dateReply),
                 reply: data.asc_getReply(i).asc_getText(),
                 time: dateReply.getTime(),
                 userInitials: this.usersStore.getInitials(parsedName),
@@ -199,7 +191,7 @@ class CommentsController extends Component {
             userName            : userName,
             parsedName,
             userColor           : (user) ? user.asc_getColor() : null,
-            date                : dateToLocaleTimeString(date, this.appOptions.lang),
+            date                : dateToLocaleTimeString(date),
             quote               : data.asc_getQuoteText(),
             comment             : data.asc_getText(),
             resolved            : data.asc_getSolved(),
@@ -238,7 +230,7 @@ class CommentsController extends Component {
                     userName            : userName,
                     parsedName          : Common.Utils.String.htmlEncode(parsedName),
                     userColor           : (user) ? user.asc_getColor() : null,
-                    date                : dateToLocaleTimeString(date, this.appOptions.lang),
+                    date                : dateToLocaleTimeString(date),
                     reply               : data.asc_getReply(i).asc_getText(),
                     time                : date.getTime(),
                     userInitials        : this.usersStore.getInitials(parsedName),

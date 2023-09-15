@@ -14,28 +14,9 @@
         border-bottom: @scaled-one-px-value-ie solid @border-toolbar-ie;
         border-bottom: @scaled-one-px-value solid @border-toolbar;
         label {
-            .font-size-medium();
+            font-size: 12px;
             .font-weight-bold();
             margin-top: 2px;
-        }
-
-        #navigation-btn-close {
-            float: right;
-            margin-left: 4px;
-
-            .rtl & {
-                float: left;
-                margin-left: 0;
-                margin-right: 4px;
-            }
-        }
-
-        #navigation-btn-settings {
-            float: right;
-
-            .rtl & {
-                float: left;
-            }
         }
     }
 
@@ -43,7 +24,7 @@
         padding-top: 45px;
         height: 100%;
         overflow: hidden;
-        .font-size-medium();
+        font-size: 12px;
 
         .treeview {
             padding: 8px 0;
@@ -63,16 +44,16 @@
             }
         }
         &.small{
-            .font-size-small();
+            font-size: 10px;
         }
         &.medium{
-            .font-size-medium();
+            font-size: 12px;
             .name {
                 padding: 4px 0;
             }
         }
         &.large{
-            .font-size-huge();
+            font-size: 14px;
         }
         .name.not-header {
             font-style: italic;

@@ -1,5 +1,6 @@
 /*
- * (c) Copyright Ascensio System SIA 2010-2023
+ *
+ * (c) Copyright Ascensio System SIA 2010-2019
  *
  * This program is a free software product. You can redistribute it and/or
  * modify it under the terms of the GNU Affero General Public License (AGPL)
@@ -12,7 +13,7 @@
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR  PURPOSE. For
  * details, see the GNU AGPL at: http://www.gnu.org/licenses/agpl-3.0.html
  *
- * You can contact Ascensio System SIA at 20A-6 Ernesta Birznieka-Upish
+ * You can contact Ascensio System SIA at 20A-12 Ernesta Birznieka-Upisha
  * street, Riga, Latvia, EU, LV-1050.
  *
  * The  interactive user interfaces in modified source and object code versions
@@ -28,7 +29,7 @@
  * Creative Commons Attribution-ShareAlike 4.0 International. See the License
  * terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
  *
- */
+*/
 /**
  *  Animation.js
  *
@@ -115,8 +116,8 @@ define([
                 me.cmbDuration.on('selected', function (combo, record) {
                     me.fireEvent('animation:durationselected', [combo, record]);
                 }, me);
-                me.cmbDuration.on('show:after', function (combo, e, params) {
-                    me.fireEvent('animation:durationfocusin', [true, combo, e, params]);
+                me.cmbDuration.on('show:after', function (combo) {
+                    me.fireEvent('animation:durationfocusin', [true, combo]);
                 }, me);
                 me.cmbDuration.on('combo:focusin', function (combo) {
                     me.fireEvent('animation:durationfocusin', [false, combo]);
@@ -146,8 +147,8 @@ define([
                 me.cmbRepeat.on('selected', function (combo, record) {
                     me.fireEvent('animation:repeatselected', [combo, record]);
                 }, me);
-                me.cmbRepeat.on('show:after', function (combo, e, params) {
-                    me.fireEvent('animation:repeatfocusin', [true, combo, e, params]);
+                me.cmbRepeat.on('show:after', function (combo) {
+                    me.fireEvent('animation:repeatfocusin', [true, combo]);
                 }, me);
                 me.cmbRepeat.on('combo:focusin', function (combo) {
                     me.fireEvent('animation:repeatfocusin', [false, combo]);
@@ -225,7 +226,7 @@ define([
 
                         if (menu.cmpEl) {
                             menu.menuAlignEl = cmp.cmpEl;
-                            menu.menuAlign = Common.UI.isRTL() ? 'tr-tr' : 'tl-tl';
+                            menu.menuAlign = 'tl-tl';
                             menu.cmpEl.css({
                                 'width': cmp.cmpEl.width() - cmp.openButton.$el.width(),
                                 'min-height': cmp.cmpEl.height()
@@ -248,7 +249,7 @@ define([
                     caption: this.txtPreview,
                     split: true,
                     menu: true,
-                    iconCls: 'toolbar__icon btn-animation-preview-start',
+                    iconCls: 'toolbar__icon animation-preview-start',
                     lock: [_set.slideDeleted, _set.noSlides, _set.noAnimationPreview, _set.timingLock],
                     dataHint: '1',
                     dataHintDirection: 'bottom',
@@ -259,7 +260,7 @@ define([
                 this.btnParameters = new Common.UI.Button({
                     cls: 'btn-toolbar  x-huge icon-top',
                     caption: this.txtParameters,
-                    iconCls: 'toolbar__icon icon btn-animation-parameters',
+                    iconCls: 'toolbar__icon icon animation-parameters',
                     menu: new Common.UI.Menu({items: []}),
                     lock: [_set.slideDeleted, _set.noSlides, _set.noGraphic, _set.noAnimation, _set.noAnimationParam, _set.timingLock],
                     dataHint: '1',
@@ -272,7 +273,7 @@ define([
                     cls: 'btn-toolbar',
                     caption: this.txtAnimationPane,
                     split: true,
-                    iconCls: 'toolbar__icon btn-transition-apply-all',
+                    iconCls: 'toolbar__icon transition-apply-all',
                     lock: [_set.slideDeleted, _set.noSlides, _set.timingLock],
                     dataHint: '1',
                     dataHintDirection: 'left',
@@ -283,7 +284,7 @@ define([
                 this.btnAddAnimation = new Common.UI.Button({
                     cls: 'btn-toolbar  x-huge  icon-top',
                     caption: this.txtAddEffect,
-                    iconCls: 'toolbar__icon icon btn-add-animation',
+                    iconCls: 'toolbar__icon icon add-animation',
                     menu: true,
                     lock: [_set.slideDeleted, _set.noSlides, _set.noGraphic, _set.timingLock],
                     dataHint: '1',
@@ -318,7 +319,7 @@ define([
 
                 this.lblDuration = new Common.UI.Label({
                     el: this.$el.find('#animation-duration'),
-                    iconCls: 'toolbar__icon btn-animation-duration',
+                    iconCls: 'toolbar__icon animation-duration',
                     caption: this.strDuration,
                     lock: [_set.slideDeleted, _set.noSlides, _set.noGraphic, _set.noAnimation, _set.noAnimationDuration, _set.timingLock]
                 });
@@ -371,7 +372,7 @@ define([
 
                 this.lblDelay = new Common.UI.Label({
                     el: this.$el.find('#animation-delay'),
-                    iconCls: 'toolbar__icon btn-animation-delay',
+                    iconCls: 'toolbar__icon animation-delay',
                     caption: this.strDelay,
                     lock: [_set.slideDeleted, _set.noSlides, _set.noGraphic, _set.noAnimation, _set.timingLock]
                 });
@@ -395,7 +396,7 @@ define([
 
                 this.lblStart = new Common.UI.Label({
                     el: this.$el.find('#animation-label-start'),
-                    iconCls: 'toolbar__icon btn-play',
+                    iconCls: 'toolbar__icon btn-preview-start',
                     caption: this.strStart,
                     lock: [_set.slideDeleted, _set.noSlides, _set.noGraphic, _set.noAnimation, _set.timingLock]
                 });
@@ -435,7 +436,7 @@ define([
 
                 this.lblRepeat = new Common.UI.Label({
                     el: this.$el.find('#animation-repeat'),
-                    iconCls: 'toolbar__icon btn-animation-repeat',
+                    iconCls: 'toolbar__icon animation-repeat',
                     caption: this.strRepeat,
                     lock: [_set.slideDeleted, _set.noSlides, _set.noGraphic, _set.noAnimation, _set.noAnimationRepeat, _set.timingLock]
                 });

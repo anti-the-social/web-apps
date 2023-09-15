@@ -1,34 +1,3 @@
-/*
- * (c) Copyright Ascensio System SIA 2010-2023
- *
- * This program is a free software product. You can redistribute it and/or
- * modify it under the terms of the GNU Affero General Public License (AGPL)
- * version 3 as published by the Free Software Foundation. In accordance with
- * Section 7(a) of the GNU AGPL its Section 15 shall be amended to the effect
- * that Ascensio System SIA expressly excludes the warranty of non-infringement
- * of any third-party rights.
- *
- * This program is distributed WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR  PURPOSE. For
- * details, see the GNU AGPL at: http://www.gnu.org/licenses/agpl-3.0.html
- *
- * You can contact Ascensio System SIA at 20A-6 Ernesta Birznieka-Upish
- * street, Riga, Latvia, EU, LV-1050.
- *
- * The  interactive user interfaces in modified source and object code versions
- * of the Program must display Appropriate Legal Notices, as required under
- * Section 5 of the GNU AGPL version 3.
- *
- * Pursuant to Section 7(b) of the License you must retain the original Product
- * logo when distributing the program. Pursuant to Section 7(e) we decline to
- * grant you any rights under trademark law for use of our trademarks.
- *
- * All the Product's GUI elements, including illustrations and icon sets, as
- * well as technical writing content are licensed under the terms of the
- * Creative Commons Attribution-ShareAlike 4.0 International. See the License
- * terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
- *
- */
 define([
     'core',
     'irregularstack',
@@ -468,11 +437,9 @@ define([
             this.appOptions.fileChoiceUrl   = this.editorConfig.fileChoiceUrl;
             this.appOptions.saveAsUrl       = this.editorConfig.saveAsUrl;
             this.appOptions.canRequestSaveAs = this.editorConfig.canRequestSaveAs;
-            this.appOptions.isDesktopApp    = this.editorConfig.targetApp == 'desktop' || Common.Controllers.Desktop.isActive();
+            this.appOptions.isDesktopApp    = this.editorConfig.targetApp == 'desktop';
             this.appOptions.lang            = this.editorConfig.lang;
             this.appOptions.canPlugins      = false;
-
-            Common.Controllers.Desktop.init(this.appOptions);
         },
 
         onExternalMessage: function(msg) {
@@ -583,10 +550,10 @@ define([
 
         onEditorPermissions: function(params) {
             var licType = params.asc_getLicenseType();
-            if (Asc.c_oLicenseResult.Expired === licType || Asc.c_oLicenseResult.Error === licType || Asc.c_oLicenseResult.ExpiredTrial === licType || Asc.c_oLicenseResult.NotBefore === licType) {
+            if (Asc.c_oLicenseResult.Expired === licType || Asc.c_oLicenseResult.Error === licType || Asc.c_oLicenseResult.ExpiredTrial === licType) {
                 Common.UI.warning({
-                    title: Asc.c_oLicenseResult.NotBefore === licType ? this.titleLicenseNotActive : this.titleLicenseExp,
-                    msg: Asc.c_oLicenseResult.NotBefore === licType ? this.warnLicenseBefore : this.warnLicenseExp,
+                    title: this.titleLicenseExp,
+                    msg: this.warnLicenseExp,
                     buttons: [],
                     closable: false
                 });
@@ -619,7 +586,6 @@ define([
             this.appOptions.canPrint          = (this.permissions.print !== false);
 
             this.appOptions.fileKey = this.document.key;
-            this.appOptions.isAnonymousSupport = !!this.api.asc_isAnonymousSupport();
 
             AscCommon.UserInfoParser.setParser(true);
             AscCommon.UserInfoParser.setCurrentName(this.appOptions.user.fullname);
@@ -729,15 +695,7 @@ define([
         },
 
         applyLicense: function() {
-            if (!this.appOptions.isAnonymousSupport && !!this.appOptions.user.anonymous) {
-                this.api.asc_coAuthoringDisconnect();
-                Common.NotificationCenter.trigger('api:disconnect');
-                Common.UI.warning({
-                    title: this.notcriticalErrorTitle,
-                    msg  : this.warnLicenseAnonymous,
-                    buttons: ['ok']
-                });
-            } else if (this._state.licenseType) {
+            if (this._state.licenseType) {
                 var license = this._state.licenseType,
                     buttons = ['ok'],
                     primary = 'ok';
@@ -753,7 +711,6 @@ define([
                 }
 
                 if (this._state.licenseType!==Asc.c_oLicenseResult.SuccessLimit && this.appOptions.canFillForms) {
-                    this.api.asc_coAuthoringDisconnect();
                     Common.NotificationCenter.trigger('api:disconnect');
                 }
 
@@ -884,7 +841,7 @@ define([
                             }
                         } else {
                             Common.Gateway.requestClose();
-                            Common.Controllers.Desktop.requestClose();
+                            DE.Controllers.Desktop.requestClose();
                         }
                         me._openDlg = null;
                     }
@@ -1363,8 +1320,7 @@ define([
                 });
 
             }
-            var val = specProps ? specProps.get_FullDate() : undefined;
-            this.cmpCalendar.setDate(val ? new Date(val) : new Date());
+            this.cmpCalendar.setDate(new Date(specProps ? specProps.get_FullDate() : undefined));
 
             // align
             var offset  = controlsContainer.offset(),
@@ -1396,7 +1352,6 @@ define([
             me._isDocReady = true;
             this.hidePreloader();
             this.onLongActionEnd(Asc.c_oAscAsyncActionType['BlockInteraction'], LoadingDocument);
-            Common.NotificationCenter.trigger('app:ready', this.appOptions);
 
             var zf = (this.appOptions.customization && this.appOptions.customization.zoom ? parseInt(this.appOptions.customization.zoom) : 100);
             (zf == -1) ? this.api.zoomFitToPage() : ((zf == -2) ? this.api.zoomFitToWidth() : this.api.zoom(zf>0 ? zf : 100));
@@ -1440,7 +1395,6 @@ define([
 
             Common.Gateway.documentReady();
             Common.Analytics.trackEvent('Load', 'Complete');
-            Common.NotificationCenter.trigger('document:ready');
         },
 
         onOptionsClick: function(menu, item, e) {
@@ -1461,7 +1415,7 @@ define([
                     Common.Analytics.trackEvent('Print');
                     break;
                 case 'close':
-                    if (!Common.Controllers.Desktop.process('goback') &&
+                    if (!DE.Controllers.Desktop.process('goback') &&
                             this.appOptions.customization && this.appOptions.customization.goback)
                     {
                         if (this.appOptions.customization.goback.requestClose && this.appOptions.canRequestClose)
@@ -1603,24 +1557,16 @@ define([
             }
 
             if (Common.UI.Themes.available()) {
-                const _fill_themes = function () {
-                    const _menu = this.view.mnuThemes;
-                    _menu.removeAll();
-
-                    const _current = Common.UI.Themes.currentThemeId();
-                    for (const t in Common.UI.Themes.map()) {
-                        _menu.addItem(new Common.UI.MenuItem({
-                            caption     : Common.UI.Themes.get(t).text,
-                            value       : t,
-                            toggleGroup : 'themes',
-                            checkable   : true,
-                            checked     : t === _current
-                        }));
-                    }
+                var current = Common.UI.Themes.currentThemeId();
+                for (var t in Common.UI.Themes.map()) {
+                    this.view.mnuThemes.addItem(new Common.UI.MenuItem({
+                        caption     : Common.UI.Themes.get(t).text,
+                        value       : t,
+                        toggleGroup : 'themes',
+                        checkable   : true,
+                        checked     : t===current
+                    }));
                 }
-
-                Common.NotificationCenter.on('uitheme:countchanged', _fill_themes.bind(this));
-                _fill_themes.call(this);
             }
             if (this.view.mnuThemes.items.length<1) {
                 menuItems[7].setVisible(false);
@@ -1648,9 +1594,6 @@ define([
             if (!this.appOptions.canBackToFolder) {
                 menuItems[11].setVisible(false);
                 itemsCount--;
-            } else {
-                var text = this.appOptions.customization.goback.text;
-                text && (typeof text == 'string') && menuItems[11].setCaption(text);
             }
 
             if ( !this.embedConfig.embedUrl || this.appOptions.isOFORM) {
@@ -2013,14 +1956,11 @@ define([
         errorInconsistentExtXlsx: 'An error has occurred while opening the file.<br>The file content corresponds to spreadsheets (e.g. xlsx), but the file has the inconsistent extension: %1.',
         errorInconsistentExtPptx: 'An error has occurred while opening the file.<br>The file content corresponds to presentations (e.g. pptx), but the file has the inconsistent extension: %1.',
         errorInconsistentExtPdf: 'An error has occurred while opening the file.<br>The file content corresponds to one of the following formats: pdf/djvu/xps/oxps, but the file has the inconsistent extension: %1.',
-        errorInconsistentExt: 'An error has occurred while opening the file.<br>The file content does not match the file extension.',
-        warnLicenseBefore: 'License not active.<br>Please contact your administrator.',
-        titleLicenseNotActive: 'License not active',
-        warnLicenseAnonymous: 'Access denied for anonymous users. This document will be opened for viewing only.'
+        errorInconsistentExt: 'An error has occurred while opening the file.<br>The file content does not match the file extension.'
 
     }, DE.Controllers.ApplicationController));
 
-/*    var Desktop = function () {
+    var Desktop = function () {
         var features = {
             version: '{{PRODUCT_VERSION}}',
             // eventloading: true,
@@ -2104,8 +2044,7 @@ define([
             },
         }
     };
- */
-    // DE.Controllers.Desktop = new Desktop();
-    // Common.Controllers = Common.Controllers || {};
-    // Common.Controllers.Desktop = DE.Controllers.Desktop;
+    DE.Controllers.Desktop = new Desktop();
+    Common.Controllers = Common.Controllers || {};
+    Common.Controllers.Desktop = DE.Controllers.Desktop;
 });

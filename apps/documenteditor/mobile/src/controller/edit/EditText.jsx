@@ -1,24 +1,14 @@
 import React, {Component} from 'react';
 import { EditText } from '../../view/edit/EditText'
-import { inject, observer } from 'mobx-react';
 
 class EditTextController extends Component {
     constructor(props) {
         super(props);
-        this.onApiFocusObject = this.onApiFocusObject.bind(this);
-        this.updateBulletsNumbers = this.updateBulletsNumbers.bind(this);
-        this.updateListType = this.updateListType.bind(this);
     }
 
     componentDidMount() {
         const api = Common.EditorApi.get();
         api && api.UpdateInterfaceState();
-        api.asc_registerCallback('asc_onFocusObject', this.onApiFocusObject);
-    }
-
-    componentWillUnmount() {
-        const api = Common.EditorApi.get();
-        api.asc_unregisterCallback('asc_onFocusObject', this.onApiFocusObject);
     }
 
     changeFontSize(curSize, isDecrement) {
@@ -184,84 +174,39 @@ class EditTextController extends Component {
         }
     }
 
-    onLineSpacing(value) {
+    onBullet(type) {
         const api = Common.EditorApi.get();
         if (api) {
-            const LINERULE_AUTO = 1;
-            api.put_PrLineSpacing(LINERULE_AUTO, value);
+            api.put_ListType(0, parseInt(type));
         }
     }
 
-    onBullet(numberingInfo) {
+    onNumber(type) {
         const api = Common.EditorApi.get();
         if (api) {
-            api.put_ListTypeCustom(JSON.parse(numberingInfo));
+            api.put_ListType(1, parseInt(type));
         }
     }
 
-    onNumber(numberingInfo) {
+    onMultiLevelList(type) {
         const api = Common.EditorApi.get();
-        if (api) {
-            api.put_ListTypeCustom(JSON.parse(numberingInfo));
-        }
-    }
-
-    onMultiLevelList(numberingInfo) {
-        const api = Common.EditorApi.get();
-        if (api) api.put_ListTypeCustom(JSON.parse(numberingInfo));
+        if (api) api.put_ListType(2, parseInt(type));
     }
 
     getIconsBulletsAndNumbers(arrayElements, type) {
         const api = Common.EditorApi.get();
         const arr = [];
 
-        arrayElements.forEach( item => {
-            arr.push({
-                numberingInfo: JSON.parse(item.numberingInfo),
-                divId: item.id
-            });
-        });
-
+        arrayElements.forEach( item => arr.push(item.id));
         if (api) api.SetDrawImagePreviewBulletForMenu(arr, type);
     }
 
-    updateBulletsNumbers(type) {
+    onLineSpacing(value) {
         const api = Common.EditorApi.get();
-        const storeTextSettings = this.props.storeTextSettings;
-        let subtype = undefined;
-        let arrayElements = (type===0) ? storeTextSettings.getBulletsList() : (type===1) ? storeTextSettings.getNumbersList() : storeTextSettings.getMultiLevelList();
-        for (let i=0; i<arrayElements.length; i++) {
-            if (api.asc_IsCurrentNumberingPreset(arrayElements[i].numberingInfo, type!==2)) {
-                subtype = arrayElements[i].subtype;
-                break;
-            }
+        if (api) {
+            const LINERULE_AUTO = 1;
+            api.put_PrLineSpacing(LINERULE_AUTO, value);
         }
-        switch (type) {
-            case 0:
-                storeTextSettings.resetBullets(subtype);
-                break;
-            case 1:
-                storeTextSettings.resetNumbers(subtype);
-                break;
-            case 2:
-                storeTextSettings.resetMultiLevel(subtype);
-                break;
-        }
-    }
-
-    updateListType() {
-        const api = Common.EditorApi.get();
-        const listId = api.asc_GetCurrentNumberingId();
-        const numformat = (listId !== null) ? api.asc_GetNumberingPr(listId).get_Lvl(api.asc_GetCurrentNumberingLvl()).get_Format() : Asc.c_oAscNumberingFormat.None;
-
-        this.props.storeTextSettings.resetListType(numformat===Asc.c_oAscNumberingFormat.Bullet ? 0 : (numformat===Asc.c_oAscNumberingFormat.None ? -1 : 1));
-    }
-
-    onApiFocusObject() {
-        this.updateListType();
-        this.updateBulletsNumbers(0);
-        this.updateBulletsNumbers(1);
-        this.updateBulletsNumbers(2);
     }
 
     render() {
@@ -285,8 +230,6 @@ class EditTextController extends Component {
                 onBullet={this.onBullet}
                 onNumber={this.onNumber}
                 getIconsBulletsAndNumbers={this.getIconsBulletsAndNumbers}
-                updateBulletsNumbers={this.updateBulletsNumbers}
-                updateListType={this.updateListType}
                 onMultiLevelList={this.onMultiLevelList}
                 onLineSpacing={this.onLineSpacing}
             />
@@ -294,4 +237,4 @@ class EditTextController extends Component {
     }
 }
 
-export default inject('storeTextSettings')(observer(EditTextController));
+export default EditTextController;

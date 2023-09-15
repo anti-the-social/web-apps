@@ -15,7 +15,7 @@
         border-bottom: @scaled-one-px-value solid @border-toolbar;
 
         label {
-            .font-size-medium();
+            font-size: 12px;
             .font-weight-bold();
             margin-top: 2px;
         }
@@ -29,10 +29,6 @@
         padding-top: 45px;
         overflow: hidden;
 
-        label {
-            .font-size-normal();
-        }
-
         .spellcheck-settings-inner {
             position: relative;
             width: 100%;
@@ -44,11 +40,6 @@
                 margin-top: 5px;
                 margin-bottom: 5px;
                 right: 4px !important;
-
-                .rtl & {
-                    right: unset !important;
-                    left: 4px !important;
-                }
             }
         }
     }
@@ -61,15 +52,6 @@
 
     #spellcheck-next {
         display: inline-block;
-
-        .btn {
-            margin-left: 5px;
-
-            .rtl & {
-                margin-left: 0;
-                margin-right: 5px;
-            }
-        }
     }
 
     #spellcheck-suggestions-list {
@@ -88,11 +70,6 @@
     #spellcheck-ignore {
         margin-left: 9px;
         display: inline-block;
-
-        .rtl & {
-            margin-left: 0;
-            margin-right: 9px;
-        }
     }
 
     #spellcheck-add-to-dictionary {
@@ -109,17 +86,6 @@
 
     #spellcheck-complete {
         display: flex;
-        .font-size-normal();
-
-        .btn-resolve {
-            display: inline-block;
-            margin-right: 10px;
-
-            .rtl & {
-                margin-right: 0;
-                margin-left: 10px;
-            }
-        }
     }
     .btn-resolve
     {

@@ -1,5 +1,6 @@
 /*
- * (c) Copyright Ascensio System SIA 2010-2023
+ *
+ * (c) Copyright Ascensio System SIA 2010-2019
  *
  * This program is a free software product. You can redistribute it and/or
  * modify it under the terms of the GNU Affero General Public License (AGPL)
@@ -12,7 +13,7 @@
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR  PURPOSE. For
  * details, see the GNU AGPL at: http://www.gnu.org/licenses/agpl-3.0.html
  *
- * You can contact Ascensio System SIA at 20A-6 Ernesta Birznieka-Upish
+ * You can contact Ascensio System SIA at 20A-12 Ernesta Birznieka-Upisha
  * street, Riga, Latvia, EU, LV-1050.
  *
  * The  interactive user interfaces in modified source and object code versions
@@ -28,7 +29,7 @@
  * Creative Commons Attribution-ShareAlike 4.0 International. See the License
  * terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
  *
- */
+*/
 /**
  *  Menu.js
  *
@@ -149,9 +150,7 @@ define([
                 offset      : [0, 0],
                 cyclic      : true,
                 search      : false,
-                scrollAlwaysVisible: true,
-                scrollToCheckedItem: true, // if true - scroll menu to checked item on menu show
-                focusToCheckedItem: false // if true - move focus to checked item on menu show
+                scrollAlwaysVisible: true
             },
 
             template: _.template([
@@ -173,18 +172,6 @@ define([
                 this.scrollAlwaysVisible = this.options.scrollAlwaysVisible;
                 this.search = this.options.search;
                 this.outerMenu      = this.options.outerMenu;
-
-                if (Common.UI.isRTL()) {
-                    if (this.menuAlign === 'tl-tr') {
-                        this.menuAlign = 'tr-tl';
-                    } else if (this.menuAlign === 'tl-bl') {
-                        this.menuAlign = 'tr-br';
-                    } else if (this.menuAlign === 'tr-br') {
-                        this.menuAlign = 'tl-bl';
-                    } else if (this.menuAlign === 'bl-tl') {
-                        this.menuAlign = 'br-tr';
-                    }
-                }
 
                 if (this.options.restoreHeight) {
                     this.options.restoreHeight = (typeof (this.options.restoreHeight) == "number") ? this.options.restoreHeight : (this.options.maxHeight ? this.options.maxHeight : 100000);
@@ -254,9 +241,6 @@ define([
 
                             item.on('click',  _.bind(me.onItemClick, me));
                             item.on('toggle', _.bind(me.onItemToggle, me));
-                        });
-                        menuRoot.on( "click", function(e) {
-                            me.trigger('menu:click', this, e);
                         });
                     }
 
@@ -412,12 +396,12 @@ define([
                         var itemTop = $selected.position().top,
                             itemHeight = $selected.outerHeight(),
                             listHeight = menuRoot.outerHeight();
-                        if (!!this.options.scrollToCheckedItem && (itemTop < 0 || itemTop + itemHeight > listHeight)) {
+                        if (itemTop < 0 || itemTop + itemHeight > listHeight) {
                             var height = menuRoot.scrollTop() + itemTop + (itemHeight - listHeight)/2;
                             height = (Math.floor(height/itemHeight) * itemHeight);
                             menuRoot.scrollTop(height);
                         }
-                        !!this.options.focusToCheckedItem && setTimeout(function(){$selected.focus();}, 1);
+                        setTimeout(function(){$selected.focus();}, 1);
                     }
                 }
                 this._search = {};
@@ -661,19 +645,12 @@ define([
                 var left = offset.left - posMenu[m[1]][0] + posParent[m[2]][0] + this.offset[0];
                 var top  = offset.top  - posMenu[m[1]][1] + posParent[m[2]][1] + this.offset[1];
 
-                if (left + menuW > docW) {
+                if (left + menuW > docW)
                     if (menuParent.is('li.dropdown-submenu')) {
                         left = offset.left - menuW + 2;
                     } else {
                         left = docW - menuW;
                     }
-                } else if (left < 0) {
-                    if (menuParent.is('li.dropdown-submenu')) {
-                        left = offset.left + parentW - 2;
-                    } else {
-                        left = 0;
-                    }
-                }
                 if (left < 0)
                     left = 0;
 
@@ -772,9 +749,7 @@ define([
             offset      : [0, 0],
             cyclic      : true,
             search      : false,
-            scrollAlwaysVisible: true,
-            scrollToCheckedItem: true, // if true - scroll menu to checked item on menu show
-            focusToCheckedItem: false // if true - move focus to checked item on menu show
+            scrollAlwaysVisible: true
         },
 
         template: _.template([
@@ -811,18 +786,6 @@ define([
             this.menuAlignEl    = this.options.menuAlignEl;
             this.scrollAlwaysVisible = this.options.scrollAlwaysVisible;
             this.search = this.options.search;
-
-            if (Common.UI.isRTL()) {
-                if (this.menuAlign === 'tl-tr') {
-                    this.menuAlign = 'tr-tl';
-                } else if (this.menuAlign === 'tl-bl') {
-                    this.menuAlign = 'tr-br';
-                } else if (this.menuAlign === 'tr-br') {
-                    this.menuAlign = 'tl-bl';
-                } else if (this.menuAlign === 'bl-tl') {
-                    this.menuAlign = 'br-tr';
-                }
-            }
 
             if (this.options.restoreHeight) {
                 this.options.restoreHeight = (typeof (this.options.restoreHeight) == "number") ? this.options.restoreHeight : (this.options.maxHeight ? this.options.maxHeight : 100000);
@@ -1036,12 +999,12 @@ define([
                     var itemTop = $selected.position().top,
                         itemHeight = $selected.outerHeight(),
                         listHeight = menuRoot.outerHeight();
-                    if (!!this.options.scrollToCheckedItem && (itemTop < 0 || itemTop + itemHeight > listHeight)) {
+                    if (itemTop < 0 || itemTop + itemHeight > listHeight) {
                         var height = menuRoot.scrollTop() + itemTop + (itemHeight - listHeight)/2;
                         height = (Math.floor(height/itemHeight) * itemHeight);
                         menuRoot.scrollTop(height);
                     }
-                    !!this.options.focusToCheckedItem && setTimeout(function(){$selected.focus();}, 1);
+                    setTimeout(function(){$selected.focus();}, 1);
                 }
             }
             this._search = {};
@@ -1176,21 +1139,12 @@ define([
             var left = offset.left - posMenu[m[1]][0] + posParent[m[2]][0] + this.offset[0];
             var top  = offset.top  - posMenu[m[1]][1] + posParent[m[2]][1] + this.offset[1];
 
-            if (left + menuW > docW) {
+            if (left + menuW > docW)
                 if (menuParent.is('li.dropdown-submenu')) {
                     left = offset.left - menuW + 2;
                 } else {
                     left = docW - menuW;
                 }
-            } else if (left < 0) {
-                if (menuParent.is('li.dropdown-submenu')) {
-                    left = offset.left + parentW - 2;
-                } else {
-                    left = 0;
-                }
-            }
-            if (left < 0)
-                left = 0;
 
             if (this.options.restoreHeight) {
                 if (typeof (this.options.restoreHeight) == "number") {

@@ -1,5 +1,6 @@
 /*
- * (c) Copyright Ascensio System SIA 2010-2023
+ *
+ * (c) Copyright Ascensio System SIA 2010-2021
  *
  * This program is a free software product. You can redistribute it and/or
  * modify it under the terms of the GNU Affero General Public License (AGPL)
@@ -12,7 +13,7 @@
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR  PURPOSE. For
  * details, see the GNU AGPL at: http://www.gnu.org/licenses/agpl-3.0.html
  *
- * You can contact Ascensio System SIA at 20A-6 Ernesta Birznieka-Upish
+ * You can contact Ascensio System SIA at 20A-12 Ernesta Birznieka-Upisha
  * street, Riga, Latvia, EU, LV-1050.
  *
  * The  interactive user interfaces in modified source and object code versions
@@ -51,7 +52,7 @@ define([
             _.extend(_options,  {
                 title: options.title ? options.title : (options.type=='sheet' ? this.txtSheetTitle : this.txtWBTitle),
                 cls: 'modal-dlg',
-                width: options.type=='sheet' ? 380 : 350,
+                width: 350,
                 height: 'auto',
                 buttons: options.buttons ? options.buttons : [{
                     value: 'ok',
@@ -66,7 +67,6 @@ define([
             this.names = options.names;
             this.isEdit = options.isEdit;
             this.api = options.api;
-            this.winId = Common.UI.getId();
 
             this.template = options.template || [
                     '<div class="box">',
@@ -74,54 +74,31 @@ define([
                             '<div class="input-row">',
                                 '<label>' + t.txtRangeName + '</label>',
                             '</div>',
-                            '<div id="' + t.winId + '-id-range-name-txt" class="input-row" style="margin-bottom: 5px;"></div>',
+                            '<div id="id-range-name-txt" class="input-row" style="margin-bottom: 5px;"></div>',
                             '<div class="input-row">',
                                 '<label>' + t.txtRange + '</label>',
                             '</div>',
-                            '<div id="' + t.winId + '-id-range-txt" class="input-row" style="margin-bottom: 10px;"></div>',
-                        '<% } else if (type=="sheet") { %>',
-                            '<div class="" style="margin-bottom: 10px;">',
-                                '<label>' + (t.txtSheetDescription + ' ' +  t.txtAllowDescription) + '</label>',
-                            '</div>',
-                            '<button type="button" class="btn btn-text-default auto" id="' + t.winId + '-id-range-btn-allow" style="min-width: 100px;margin-bottom: 15px;">' + t.txtAllowRanges + '</button>',
+                            '<div id="id-range-txt" class="input-row" style="margin-bottom: 10px;"></div>',
                         '<% } else { %>',
                             '<div class="" style="margin-bottom: 10px;">',
-                                '<label>' + t.txtWBDescription + '</label>',
+                                '<label>' + (t.type=='sheet' ? t.txtSheetDescription : t.txtWBDescription) + '</label>',
                             '</div>',
                         '<% } %>',
-                        '<% if (type=="sheet") { %>',
-                        '<table cols="2" style="width: 100%;">',
-                            '<tr>',
-                                '<td class="padding-right" style="width:50%;">',
-                                    '<label class="input-label">' + t.txtPassword + ' (' + t.txtOptional + ')' + '</label>',
-                                    '<div id="' + t.winId + '-id-password-txt" class="input-row" style="width: 100%;margin-bottom: 10px;"></div>',
-                                '</td>',
-                                '<td class="padding-left" style="width:50%;">',
-                                    '<label class="input-label">' + t.txtRepeat + '</label>',
-                                    '<div id="' + t.winId + '-id-repeat-txt" class="input-row" style="width: 100%;margin-bottom: 10px;"></div>',
-                                '</td>',
-                            '</tr>',
-                            '<tr>',
-                                '<td colspan="2" style="padding-bottom: 10px;">',
-                                    '<label class="light">' + t.txtWarning + '</label>',
-                                '</td>',
-                            '</tr>',
-                        '</table>',
-                        '<div class="input-row">',
-                            '<label>' + t.txtAllow + '</label>',
-                        '</div>',
-                        '<div id="' + t.winId + '-protect-dlg-options" class="" style="width: 100%; height: 116px; overflow: hidden;"></div>',
-                        '<% } else { %>',
                         '<div class="input-row">',
                             '<label>' + t.txtPassword + ' (' + t.txtOptional + ')' + '</label>',
                         '</div>',
-                        '<div id="' + t.winId + '-id-password-txt" class="input-row" style="margin-bottom: 5px;"></div>',
+                        '<div id="id-password-txt" class="input-row" style="margin-bottom: 5px;"></div>',
                         '<div class="input-row">',
                             '<label>' + t.txtRepeat + '</label>',
                         '</div>',
-                        '<div id="' + t.winId + '-id-repeat-txt" class="input-row" style="margin-bottom: 10px;"></div>',
-                        '<label class="light">' + t.txtWarning + '</label>',
+                        '<div id="id-repeat-txt" class="input-row" style="margin-bottom: 10px;"></div>',
+                        '<% if (type=="sheet") { %>',
+                        '<div class="input-row">',
+                            '<label>' + t.txtAllow + '</label>',
+                        '</div>',
+                        '<div id="protect-dlg-options" class="" style="width: 100%; height: 139px; overflow: hidden;margin-bottom: 10px;"></div>',
                         '<% } %>',
+                        '<label>' + t.txtWarning + '</label>',
                     '</div>'
                 ].join('');
 
@@ -136,7 +113,7 @@ define([
             this.$window.find('.dlg-btn').on('click', _.bind(this.onBtnClick, this));
 
             this.repeatPwd = new Common.UI.InputField({
-                el: $('#' + this.winId + '-id-repeat-txt'),
+                el: $('#id-repeat-txt'),
                 type: 'password',
                 allowBlank  : true,
                 style       : 'width: 100%;',
@@ -148,7 +125,7 @@ define([
             });
 
             this.inputPwd = new Common.UI.InputFieldBtnPassword({
-                el: $('#' + this.winId + '-id-password-txt'),
+                el: $('#id-password-txt'),
                 type: 'password',
                 allowBlank  : true,
                 style       : 'width: 100%;',
@@ -160,18 +137,18 @@ define([
 
             if (this.type == 'sheet') {
                 this.optionsList = new Common.UI.ListView({
-                    el: $('#' + this.winId + '-protect-dlg-options', this.$window),
+                    el: $('#protect-dlg-options', this.$window),
                     store: new Common.UI.DataViewStore(),
                     simpleAddMode: true,
                     scrollAlwaysVisible: true,
-                    template: _.template(['<div class="listview inner protect-sheet-options" style=""></div>'].join('')),
+                    template: _.template(['<div class="listview inner" style=""></div>'].join('')),
                     itemTemplate: _.template([
                         '<div>',
-                        '<label class="checkbox-indeterminate">',
+                        '<label class="checkbox-indeterminate" style="position:absolute;">',
                         '<input id="pdcheckbox-<%= id %>" type="checkbox" class="button__checkbox">',
                         '<label for="pdcheckbox-<%= id %>" class="checkbox__shape" ></label>',
                         '</label>',
-                        '<div id="<%= id %>" class="list-item">',
+                        '<div id="<%= id %>" class="list-item" style="pointer-events:none; margin-left: 20px;display: flex;">',
                         '<div style="flex-grow: 1;"><%= Common.Utils.String.htmlEncode(value) %></div>',
                         '</div>',
                         '</div>'
@@ -184,16 +161,11 @@ define([
                 });
                 this.optionsList.onKeyDown = _.bind(this.onListKeyDown, this);
                 this.optionsList.on('entervalue', _.bind(this.onPrimary, this));
-
-                this.btnAllowRanges = new Common.UI.Button({
-                    el: $('#' + this.winId + '-id-range-btn-allow', this.$window)
-                });
-                this.btnAllowRanges.on('click', _.bind(this.onAllowRangesClick, this, false));
             }
 
             if (this.type == 'range') {
                 this.inputRangeName = new Common.UI.InputField({
-                    el: $('#' + this.winId + '-id-range-name-txt'),
+                    el: $('#id-range-name-txt'),
                     allowBlank  : false,
                     blankError  : this.txtEmpty,
                     style       : 'width: 100%;',
@@ -219,7 +191,7 @@ define([
                     }
                 });
                 this.txtDataRange = new Common.UI.InputFieldBtn({
-                    el          : $('#' + this.winId + '-id-range-txt'),
+                    el          : $('#id-range-txt'),
                     name        : 'range',
                     style       : 'width: 100%;',
                     allowBlank  : false,
@@ -241,7 +213,7 @@ define([
             var arr = [];
             (this.type == 'range') && (arr = arr.concat([this.inputRangeName, this.txtDataRange]));
             arr = arr.concat([this.inputPwd, this.repeatPwd]);
-            (this.type == 'sheet') && (arr = [this.btnAllowRanges].concat(arr).concat([this.optionsList]));
+            (this.type == 'sheet') && (arr = arr.concat([this.optionsList]));
             return arr;
         },
 
@@ -451,27 +423,6 @@ define([
             }
         },
 
-        onAllowRangesClick: function() {
-            var me = this,
-                xy = me.$window.offset(),
-                props = me.api.asc_getProtectedRanges(),
-                win = new SSE.Views.ProtectRangesDlg({
-                    api: me.api,
-                    props: props,
-                    handler: function(result, settings) {
-                        if (result == 'ok') {
-                            me.api.asc_setProtectedRanges(settings.arr, settings.deletedArr);
-                        }
-                    }
-                }).on('close', function() {
-                    me.show();
-                    setTimeout(function(){ me.getDefaultFocusableComponent().focus(); }, 100);
-                });
-
-            me.hide();
-            win.show(xy.left - 65, xy.top + 45);
-        },
-
         txtPassword : "Password",
         txtRepeat: 'Repeat password',
         txtIncorrectPwd: 'Confirmation password is not identical',
@@ -504,9 +455,7 @@ define([
         textSelectData: 'Select Data',
         textInvalidRange: 'ERROR! Invalid cells range',
         textInvalidName: 'The range title must begin with a letter and may only contain letters, numbers, and spaces.',
-        textExistName: 'ERROR! Range with such a title already exists',
-        txtAllowRanges: 'Allow edit ranges',
-        txtAllowDescription: 'You can unlock specific ranges for editing.'
+        textExistName: 'ERROR! Range with such a title already exists'
 
     }, SSE.Views.ProtectDialog || {}));
 });

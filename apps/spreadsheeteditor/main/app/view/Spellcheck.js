@@ -1,5 +1,6 @@
 /*
- * (c) Copyright Ascensio System SIA 2010-2023
+ *
+ * (c) Copyright Ascensio System SIA 2010-2019
  *
  * This program is a free software product. You can redistribute it and/or
  * modify it under the terms of the GNU Affero General Public License (AGPL)
@@ -12,7 +13,7 @@
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR  PURPOSE. For
  * details, see the GNU AGPL at: http://www.gnu.org/licenses/agpl-3.0.html
  *
- * You can contact Ascensio System SIA at 20A-6 Ernesta Birznieka-Upish
+ * You can contact Ascensio System SIA at 20A-12 Ernesta Birznieka-Upisha
  * street, Riga, Latvia, EU, LV-1050.
  *
  * The  interactive user interfaces in modified source and object code versions
@@ -28,7 +29,7 @@
  * Creative Commons Attribution-ShareAlike 4.0 International. See the License
  * terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
  *
- */
+*/
 /**
  * User: Julia.Radzhabova
  * Date: 30.07.19
@@ -64,7 +65,7 @@ define([
                         '<label class="header" style="display: block;"><%= scope.txtDictionaryLanguage %></label>',
                         '<div id="spellcheck-dictionary-language"></div>',
                         '<div id="spellcheck-complete" class="hidden">',
-                            '<i class="btn-resolve"></i>',
+                            '<i class="btn-resolve" style="display: inline-block;margin-right: 10px;"></i>',
                             '<%= scope.txtComplete %>' ,
                         '</div>',
                     '</div>',
@@ -109,6 +110,7 @@ define([
 
             this.buttonNext = new Common.UI.Button({
                 parentEl: $('#spellcheck-next'),
+                style: 'margin-left: 5px;',
                 cls: 'btn-toolbar bg-white',
                 iconCls: 'toolbar__icon btn-nextitem',
                 hint: this.txtNextTip,

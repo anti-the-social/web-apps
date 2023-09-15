@@ -1,5 +1,6 @@
 /*
- * (c) Copyright Ascensio System SIA 2010-2023
+ *
+ * (c) Copyright Ascensio System SIA 2010-2019
  *
  * This program is a free software product. You can redistribute it and/or
  * modify it under the terms of the GNU Affero General Public License (AGPL)
@@ -12,7 +13,7 @@
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR  PURPOSE. For
  * details, see the GNU AGPL at: http://www.gnu.org/licenses/agpl-3.0.html
  *
- * You can contact Ascensio System SIA at 20A-6 Ernesta Birznieka-Upish
+ * You can contact Ascensio System SIA at 20A-12 Ernesta Birznieka-Upisha
  * street, Riga, Latvia, EU, LV-1050.
  *
  * The  interactive user interfaces in modified source and object code versions
@@ -28,7 +29,7 @@
  * Creative Commons Attribution-ShareAlike 4.0 International. See the License
  * terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
  *
- */
+*/
 /**
  *    SearchBar.js
  *
@@ -52,8 +53,7 @@ define([
             cls: 'search-bar',
             alias: 'SearchBar',
             showOpenPanel: true,
-            toolclose: 'hide',
-            automove: false
+            toolclose: 'hide'
         },
 
         initialize : function(options) {
@@ -61,10 +61,7 @@ define([
 
             this.template = [
                 '<div class="box">',
-                    '<div class="search-input-group">',
-                        '<input type="text" id="search-bar-text" class="input-field form-control" maxlength="255" placeholder="'+this.textFind+'" autocomplete="off">',
-                        '<div id="search-bar-results">0/0</div>',
-                    '</div>',
+                    '<input type="text" id="search-bar-text" class="input-field form-control" maxlength="255" placeholder="'+this.textFind+'" autocomplete="off">',
                     '<div class="tools">',
                         '<div id="search-bar-back"></div>',
                         '<div id="search-bar-next"></div>',
@@ -114,7 +111,7 @@ define([
                 this.btnOpenPanel = new Common.UI.Button({
                     parentEl: $('#search-bar-open-panel'),
                     cls: 'btn-toolbar',
-                    iconCls: 'toolbar__icon btn-more-vertical',
+                    iconCls: 'toolbar__icon more-vertical',
                     hint: this.tipOpenAdvancedSettings
                 });
                 this.btnOpenPanel.on('click', _.bind(this.onOpenPanel, this));
@@ -130,22 +127,16 @@ define([
                 this.hide();
             }, this))
 
-            this.searchResults = $('#search-bar-results');
-
             this.on('animate:before', _.bind(this.focus, this));
 
-            Common.NotificationCenter.on('search:updateresults', _.bind(function (resultNumber, allResults) {
-                this.disableNavButtons(resultNumber, allResults);
-                this.updateResultsNumber(resultNumber, allResults);
-            }, this));
+            Common.NotificationCenter.on('search:updateresults', _.bind(this.disableNavButtons, this));
 
             return this;
         },
 
         show: function(text) {
             var top = ($('#app-title').length > 0 ? $('#app-title').height() : 0) + $('#toolbar').height() + 2,
-                left = !Common.UI.isRTL() ? Common.Utils.innerWidth() - ($('#right-menu').is(':visible') ? $('#right-menu').width() : 0) - this.options.width - 32 :
-                    ($('#right-menu').is(':visible') ? $('#right-menu').width() : 0) + 32;
+                left = Common.Utils.innerWidth() - ($('#right-menu').is(':visible') ? $('#right-menu').width() : 0) - this.options.width - 32;
             Common.UI.Window.prototype.show.call(this, left, top);
 
             this.disableNavButtons();
@@ -181,8 +172,7 @@ define([
 
         onLayoutChanged: function () {
             var top = $('#app-title').height() + $('#toolbar').height() + 2,
-                left = !Common.UI.isRTL() ? Common.Utils.innerWidth() - ($('#right-menu').is(':visible') ? $('#right-menu').width() : 0) - this.options.width - 32 :
-                    ($('#right-menu').is(':visible') ? $('#right-menu').width() : 0) + 32;
+                left = Common.Utils.innerWidth() - ($('#right-menu').is(':visible') ? $('#right-menu').width() : 0) - this.options.width - 32;
             this.$window.css({left: left, top: top});
         },
 
@@ -199,12 +189,6 @@ define([
             var disable = (this.inputSearch.val() === '' && !window.SSE) || !allResults;
             this.btnBack.setDisabled(disable);
             this.btnNext.setDisabled(disable);
-        },
-
-        updateResultsNumber: function (current, all) {
-            this.searchResults.text(!all || (this.inputSearch.val() === '' && !window.SSE) ? '0/0' :
-                (Common.UI.isRTL() ? all + '/' + (current + 1) : current + 1 + '/' + all));
-            this.inputSearch.css(Common.UI.isRTL() ? 'padding-left' : 'padding-right', this.searchResults.outerWidth() + 'px');
         },
 
         textFind: 'Find',

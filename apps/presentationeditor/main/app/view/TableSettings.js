@@ -1,5 +1,6 @@
 /*
- * (c) Copyright Ascensio System SIA 2010-2023
+ *
+ * (c) Copyright Ascensio System SIA 2010-2019
  *
  * This program is a free software product. You can redistribute it and/or
  * modify it under the terms of the GNU Affero General Public License (AGPL)
@@ -12,7 +13,7 @@
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR  PURPOSE. For
  * details, see the GNU AGPL at: http://www.gnu.org/licenses/agpl-3.0.html
  *
- * You can contact Ascensio System SIA at 20A-6 Ernesta Birznieka-Upish
+ * You can contact Ascensio System SIA at 20A-12 Ernesta Birznieka-Upisha
  * street, Riga, Latvia, EU, LV-1050.
  *
  * The  interactive user interfaces in modified source and object code versions
@@ -28,7 +29,7 @@
  * Creative Commons Attribution-ShareAlike 4.0 International. See the License
  * terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
  *
- */
+*/
 /**
  *  TableSettings.js
  *
@@ -340,7 +341,7 @@ define([
             this.btnEdit = new Common.UI.Button({
                 parentEl: $('#table-btn-edit'),
                 cls         : 'btn-toolbar align-left',
-                iconCls     : 'toolbar__icon btn-rows-and-columns',
+                iconCls     : 'toolbar__icon rows-and-columns',
                 caption     : this.textEdit,
                 style       : 'width: 100%;',
                 menu: new Common.UI.Menu({
@@ -648,20 +649,16 @@ define([
                     parentEl: $('#table-border-color-btn'),
                     color: 'auto',
                     auto: true,
-                    eyeDropper: true,
                     dataHint: '1',
                     dataHintDirection: 'bottom',
                     dataHintOffset: 'big'
                 });
                 this.lockedControls.push(this.btnBorderColor);
                 this.borderColor = this.btnBorderColor.getPicker();
-                this.btnBorderColor.on('eyedropper:start', _.bind(this.onEyedropperStart, this));
-                this.btnBorderColor.on('eyedropper:end', _.bind(this.onEyedropperEnd, this));
 
                 this.btnBackColor = new Common.UI.ColorButton({
                     parentEl: $('#table-back-color-btn'),
                     transparent: true,
-                    eyeDropper: true,
                     dataHint: '1',
                     dataHintDirection: 'bottom',
                     dataHintOffset: 'big'
@@ -669,8 +666,6 @@ define([
                 this.lockedControls.push(this.btnBackColor);
                 this.colorsBack = this.btnBackColor.getPicker();
                 this.btnBackColor.on('color:select', _.bind(this.onColorsBackSelect, this));
-                this.btnBackColor.on('eyedropper:start', _.bind(this.onEyedropperStart, this));
-                this.btnBackColor.on('eyedropper:end', _.bind(this.onEyedropperEnd, this));
             }
             this.colorsBack.updateColors(Common.Utils.ThemeColor.getEffectColors(), Common.Utils.ThemeColor.getStandartColors());
             this.borderColor.updateColors(Common.Utils.ThemeColor.getEffectColors(), Common.Utils.ThemeColor.getStandartColors());
@@ -800,12 +795,11 @@ define([
             if (!this.btnTableTemplate) {
                 this.btnTableTemplate = new Common.UI.Button({
                     cls         : 'btn-large-dataview template-table',
-                    scaling     : false,
                     iconCls     : 'icon-template-table',
                     menu        : new Common.UI.Menu({
                         style: 'width: 588px;',
                         items: [
-                            { template: _.template('<div id="id-table-menu-template" class="menu-table-template"></div>') }
+                            { template: _.template('<div id="id-table-menu-template" class="menu-table-template"  style="margin: 5px 5px 5px 10px;"></div>') }
                         ]
                     }),
                     dataHint: '1',
@@ -821,7 +815,6 @@ define([
                         store: new Common.UI.DataViewStore(),
                         itemTemplate: _.template('<div id="<%= id %>" class="item"><img src="<%= imageUrl %>" height="52" width="72"></div>'),
                         style: 'max-height: 350px;',
-                        cls: 'classic',
                         delayRenderTips: true
                     });
                 });
@@ -879,15 +872,6 @@ define([
                 });
                 this.linkAdvanced && this.linkAdvanced.toggleClass('disabled', disable);
             }
-        },
-
-        onEyedropperStart: function (btn) {
-            this.api.asc_startEyedropper(_.bind(btn.eyedropperEnd, btn));
-            this.fireEvent('eyedropper', true);
-        },
-
-        onEyedropperEnd: function () {
-            this.fireEvent('eyedropper', false);
         },
 
         textBorders:        'Border\'s Style',

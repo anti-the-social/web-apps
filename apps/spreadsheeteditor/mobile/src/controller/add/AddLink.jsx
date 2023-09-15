@@ -113,17 +113,17 @@ class AddLinkController extends Component {
         api.asc_insertHyperlink(link);
         
         if(this.props.isNavigate) {
-            this.closeModal('.add-popup', '#add-popover');
+            f7.views.current.router.back();
         } else {
-            this.closeModal('#add-link-popup', '#add-link-popover');
+            this.closeModal();
         }
     }
 
-    closeModal(mobileSelector, tabletSelector) {
+    closeModal () {
         if (Device.phone) {
-            f7.popup.close(mobileSelector);
+            f7.popup.close('#add-link-popup');
         } else {
-            f7.popover.close(tabletSelector);
+            f7.popover.close('#add-link-popover');
         }
     }
 

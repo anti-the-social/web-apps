@@ -24,6 +24,7 @@ export const stores = {
     storeSpreadsheetSettings: new storeSpreadsheetSettings(),
     storeApplicationSettings: new storeApplicationSettings(),
     users: new storeUsers(),
+    sheets: new storeWorksheets(),
     storeFunctions: new storeFunctions(),
     storeTextSettings: new storeTextSettings(),
     storeSpreadsheetInfo: new storeSpreadsheetInfo(),
